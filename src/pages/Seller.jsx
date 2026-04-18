@@ -402,43 +402,6 @@ export default function Seller({ seller, setS }) {
               </div>
             </div>
 
-            {/* 税計算結果 */}
-            {sellerPrice > 0 && (
-              <div style={{ background: "#f5f3ff", borderRadius: 8, padding: "12px 14px", fontSize: 12, color: "#4b5563", lineHeight: 2 }}>
-                <div style={{ fontWeight: 600, color: "#4338ca", marginBottom: 4, fontSize: 13 }}>📊 税額概算</div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span>売却価格</span><span>¥{sellerPrice.toLocaleString()}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", color: "#dc2626" }}>
-                  <span>▲ 取得費{seller.shotokuhi5pct ? "（概算5%）" : ""}</span>
-                  <span>▲¥{Math.floor(tax.shotokuhi).toLocaleString()}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", color: "#dc2626" }}>
-                  <span>▲ 譲渡費用</span>
-                  <span>▲¥{Math.floor(tax.jotoHiyo).toLocaleString()}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid #c4b5fd", paddingTop: 4, marginTop: 2, fontWeight: 600 }}>
-                  <span>譲渡所得</span><span>¥{Math.floor(tax.jotoShotoku).toLocaleString()}</span>
-                </div>
-                {tax.kojo > 0 && (
-                  <div style={{ display: "flex", justifyContent: "space-between", color: "#dc2626" }}>
-                    <span>▲ 特別控除</span><span>▲¥{tax.kojo.toLocaleString()}</span>
-                  </div>
-                )}
-                {seller.kojo3000Sozoku && sellerPrice > 100000000 && (
-                  <div style={{ color: "#dc2626", fontSize: 11 }}>※相続空き家控除は1億円超のため不適用</div>
-                )}
-                <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid #c4b5fd", paddingTop: 4, marginTop: 2, fontWeight: 600 }}>
-                  <span>課税譲渡所得</span><span>¥{Math.floor(tax.kazeiShotoku).toLocaleString()}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280" }}>
-                  <span>× 税率（{seller.taxKubun === "short" ? "短期" : seller.keigenZeiritsu ? "居住用軽減" : "長期"} {(tax.zeiritsu * 100).toFixed(3)}%）</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, color: "#4338ca", borderTop: "1px solid #c4b5fd", paddingTop: 4, marginTop: 2, fontSize: 14 }}>
-                  <span>税額概算</span><span>¥{tax.zei.toLocaleString()}</span>
-                </div>
-              </div>
-            )}
           </div>
         );
       })()}
