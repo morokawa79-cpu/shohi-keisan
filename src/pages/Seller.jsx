@@ -31,7 +31,7 @@ export const initSeller = {
   kenrishoPunshitsu: "",
   souzokuToroku: "",
   ihinZanchi: "",
-  ihinZanchiJoto: true,   // true=譲渡費用に算入（デフォルト）
+  ihinZanchiJoto: false,  // false=デフォルトNG（買主要求など特殊事情の場合のみOKに）
   hikkoshi: "",
   otherS: "",
   otherSLabel: "その他",
@@ -112,7 +112,7 @@ export default function Seller({ seller, setS }) {
         {/* ── 譲渡費用OK ─────────────────────────── */}
         <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: "10px 14px", marginBottom: 12 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "#1d4ed8", marginBottom: 6 }}>
-            ✅ 譲渡費用（税額計算に算入・ここが多いほど税金が減る）
+            ✅ 譲渡費用 or 取得費（税額計算に算入・ここが多いほど税金が減る）
           </div>
           <ToggleRow
             label="仲介手数料（消費税込）"
@@ -128,6 +128,7 @@ export default function Seller({ seller, setS }) {
           <Row label="解体費用" value={seller.kaitai} onChange={v => setS("kaitai", v)} note="売却のために必要な場合" />
           <Row label="建物滅失登記費用" value={seller.metshitsu} onChange={v => setS("metshitsu", v)} note="土地家屋調査士概算" />
           <Row label="測量費用（確定測量等）" value={seller.sokuryo} onChange={v => setS("sokuryo", v)} />
+          <Row label="相続登記費用（取得費）" value={seller.souzokuToroku} onChange={v => setS("souzokuToroku", v)} note="相続で取得した物件の登記費用・取得費として算入可" />
           {seller.ihinZanchiJoto !== false && (
             <div>
               <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="売買条件として必要な場合は算入可" />
@@ -153,7 +154,6 @@ export default function Seller({ seller, setS }) {
           <Row label="抵当権抹消登記費用" value={seller.teitoSetsu} onChange={v => setS("teitoSetsu", v)} note="司法書士報酬込・概算" />
           <Row label="住所変更登記費用" value={seller.jushoHenko} onChange={v => setS("jushoHenko", v)} note="司法書士報酬込・概算" />
           <Row label="権利書紛失（本人確認情報）" value={seller.kenrishoPunshitsu} onChange={v => setS("kenrishoPunshitsu", v)} note="司法書士報酬概算" />
-          <Row label="相続登記費用" value={seller.souzokuToroku} onChange={v => setS("souzokuToroku", v)} note="相続による所有権移転登記・司法書士報酬込" />
           {seller.ihinZanchiJoto === false && (
             <div>
               <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="個人的な理由での処分は譲渡費用不可" />

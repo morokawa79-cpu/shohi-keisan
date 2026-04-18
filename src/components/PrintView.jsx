@@ -54,12 +54,13 @@ function SellerPrint({ seller }) {
         <Row label="収入合計" value={yen(income)} bold borderTop />
 
         {/* 経費 — ✅譲渡費用OK */}
-        <SectionHead label="■ 経費（支出）　✅ 譲渡費用（税額計算に算入）" color="#1d4ed8" />
+        <SectionHead label="■ 経費（支出）　✅ 譲渡費用 or 取得費（税額計算に算入）" color="#1d4ed8" />
         <Row label="仲介手数料（消費税込）" value={minus(chuko)} indent />
         <Row label="印紙代（売買契約書）" value={minus(calcInshiBaibai(price))} indent />
         {parseNum(seller.kaitai)    > 0 && <Row label="解体費用"                value={minus(parseNum(seller.kaitai))}    indent />}
         {parseNum(seller.metshitsu) > 0 && <Row label="建物滅失登記費用"        value={minus(parseNum(seller.metshitsu))} indent />}
         {parseNum(seller.sokuryo)   > 0 && <Row label="測量費用（確定測量等）"  value={minus(parseNum(seller.sokuryo))}   indent />}
+        {parseNum(seller.souzokuToroku)     > 0 && <Row label="相続登記費用（取得費）"     value={minus(parseNum(seller.souzokuToroku))}     indent />}
         {seller.ihinZanchiJoto !== false && parseNum(seller.ihinZanchi) > 0 && <Row label="遺品整理・残置物撤去費用" value={minus(parseNum(seller.ihinZanchi))} indent />}
         {parseNum(seller.otherJoto) > 0 && <Row label={seller.otherJotoLabel || "その他（譲渡費用算入可）"} value={minus(parseNum(seller.otherJoto))} indent />}
 
@@ -68,8 +69,7 @@ function SellerPrint({ seller }) {
         {parseNum(seller.teitoSetsu)        > 0 && <Row label="抵当権抹消登記費用"         value={minus(parseNum(seller.teitoSetsu))}        indent />}
         {parseNum(seller.jushoHenko)        > 0 && <Row label="住所変更登記費用"           value={minus(parseNum(seller.jushoHenko))}        indent />}
         {parseNum(seller.kenrishoPunshitsu) > 0 && <Row label="権利書紛失（本人確認情報）" value={minus(parseNum(seller.kenrishoPunshitsu))} indent />}
-        {parseNum(seller.souzokuToroku)     > 0 && <Row label="相続登記費用"               value={minus(parseNum(seller.souzokuToroku))}     indent />}
-        {seller.ihinZanchiJoto === false && parseNum(seller.ihinZanchi) > 0 && <Row label="遺品整理・残置物撤去費用" value={minus(parseNum(seller.ihinZanchi))} indent />}
+        {seller.ihinZanchiJoto === false && parseNum(seller.ihinZanchi) > 0 && <Row label="遺品整理・残置物撤去費用（買主要求）" value={minus(parseNum(seller.ihinZanchi))} indent />}
         {parseNum(seller.hikkoshi)          > 0 && <Row label="引越し費用"                 value={minus(parseNum(seller.hikkoshi))}          indent />}
         {parseNum(seller.otherS)            > 0 && <Row label={seller.otherSLabel || "その他"} value={minus(parseNum(seller.otherS))} indent />}
         {/* 旧フィールド後方互換 */}

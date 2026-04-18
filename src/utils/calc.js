@@ -86,7 +86,8 @@ export function calcJotoZei(f) {
     + parseNum(f.sokuryo)
     + parseNum(f.metshitsu)
     + parseNum(f.otherJoto)
-    + (f.ihinZanchiJoto !== false ? parseNum(f.ihinZanchi) : 0);
+    + (f.ihinZanchiJoto !== false ? parseNum(f.ihinZanchi) : 0)
+    + parseNum(f.souzokuToroku);
 
   const jotoShotoku = price - shotokuhi - jotoHiyo;
 
