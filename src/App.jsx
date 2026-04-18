@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Seller, { initSeller } from "./pages/Seller";
 import Buyer, { initBuyer } from "./pages/Buyer";
+import PrintView from "./components/PrintView";
 
 const STORAGE_KEY = "shohi_cases";
 
@@ -84,17 +85,8 @@ export default function App() {
         input, select, textarea { font-size: 16px !important; }
       `}</style>
 
-      {/* 印刷時のみ表示されるヘッダー */}
-      <div className="print-only" style={{ padding: "8px 16px", borderBottom: "2px solid #1e3a5f", marginBottom: 12 }}>
-        <div style={{ fontSize: 18, fontWeight: 700, color: "#1e3a5f" }}>
-          不動産諸費用計算書（{tab === "seller" ? "売主向け" : "買主向け"}）
-        </div>
-        <div style={{ fontSize: 11, color: "#6b7280", marginTop: 2 }}>
-          {tab === "seller"
-            ? `${seller.caseNameS || ""} / ${seller.customerNameS || ""} / ${seller.dateS}`
-            : `${buyer.caseNameB || ""} / ${buyer.customerNameB || ""} / ${buyer.dateB}`}
-        </div>
-      </div>
+      {/* 印刷用テーブルビュー */}
+      <PrintView tab={tab} seller={seller} buyer={buyer} />
 
       {/* ヘッダー */}
       <div className="no-print" style={{
@@ -173,8 +165,8 @@ export default function App() {
         ))}
       </div>
 
-      {/* 本体 */}
-      <div className="print-area" style={{ maxWidth: 720, margin: "0 auto", padding: "16px 16px 40px" }}>
+      {/* 本体（印刷時は非表示） */}
+      <div className="no-print" style={{ maxWidth: 720, margin: "0 auto", padding: "16px 16px 40px" }}>
         {tab === "seller" && <Seller seller={seller} setS={setS} />}
         {tab === "buyer" && <Buyer buyer={buyer} setB={setB} />}
       </div>
