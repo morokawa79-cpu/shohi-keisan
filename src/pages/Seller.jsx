@@ -423,38 +423,7 @@ export default function Seller({ seller, setS }) {
 
         return (
           <div style={{ background: "linear-gradient(135deg,#1e3a5f,#1d4ed8)", borderRadius: 10, padding: "18px 20px", boxShadow: "0 4px 12px rgba(30,58,95,0.3)" }}>
-            <div style={{ color: "#93c5fd", fontSize: 11, letterSpacing: "0.1em", marginBottom: 10 }}>SETTLEMENT SUMMARY</div>
-
-            <div style={{ fontSize: 11, color: "#93c5fd", marginBottom: 4 }}>① 収入</div>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-              <span style={{ fontSize: 13, color: "#bbf7d0" }}>売却価格</span>
-              <span style={{ fontSize: 13, color: "#bbf7d0" }}>¥{sellerPrice.toLocaleString()}</span>
-            </div>
-            {koteishisan > 0 && (
-              <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-                <span style={{ fontSize: 13, color: "#bbf7d0" }}>固定資産税精算金</span>
-                <span style={{ fontSize: 13, color: "#bbf7d0" }}>¥{koteishisan.toLocaleString()}</span>
-              </div>
-            )}
-            {kanri > 0 && (
-              <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-                <span style={{ fontSize: 13, color: "#bbf7d0" }}>管理費等精算金</span>
-                <span style={{ fontSize: 13, color: "#bbf7d0" }}>¥{kanri.toLocaleString()}</span>
-              </div>
-            )}
-
-            <div style={{ fontSize: 11, color: "#93c5fd", marginTop: 10, marginBottom: 4 }}>② 経費（税除く）</div>
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-              <span style={{ fontSize: 13, color: "#fca5a5" }}>経費合計（詳細は上記参照）</span>
-              <span style={{ fontSize: 13, color: "#fca5a5" }}>▲¥{expense.toLocaleString()}</span>
-            </div>
-
-            <div style={{ background: "rgba(255,255,255,0.12)", borderRadius: 8, padding: "10px 14px", marginTop: 10, marginBottom: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>③ 税引前手残り</span>
-              <span style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>¥{zenZei.toLocaleString()}</span>
-            </div>
-
-            <div style={{ fontSize: 11, color: "#93c5fd", marginBottom: 6 }}>④ 譲渡所得税の計算</div>
+            <div style={{ fontSize: 11, color: "#93c5fd", marginBottom: 6 }}>① 譲渡所得税の計算</div>
             <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: 8, padding: "12px 14px", fontSize: 12, color: "#e2e8f0", lineHeight: 2, marginBottom: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>売却価格</span><span>¥{sellerPrice.toLocaleString()}</span>
@@ -497,7 +466,7 @@ export default function Seller({ seller, setS }) {
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.3)" }}>
-              <span style={{ color: "#fff", fontSize: 15, fontWeight: 700 }}>⑤ 最終手残り概算</span>
+              <span style={{ color: "#fff", fontSize: 15, fontWeight: 700 }}>② 最終手残り概算</span>
               <span style={{ color: "#fbbf24", fontSize: 26, fontWeight: 800 }}>
                 ¥{final.toLocaleString()}
               </span>
