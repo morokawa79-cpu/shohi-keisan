@@ -50,19 +50,24 @@ export function calcSellerExpense(f) {
   const price = parseNum(f.salePriceS);
   const chuko = f.autoChukoS !== false ? calcChuko(price) : parseNum(f.manualChukoS);
   const items = [
+    // 譲渡費用OK
     chuko,
     calcInshiBaibai(price),
-    parseNum(f.teitoSetsu),
-    parseNum(f.jushoHenko),
-    parseNum(f.kenrishoPunshitsu),
-    parseNum(f.otherS3),
     parseNum(f.kaitai),
     parseNum(f.metshitsu),
     parseNum(f.sokuryo),
-    parseNum(f.otherS2),
+    parseNum(f.otherJoto),
+    // 経費NG（手残りには影響・税額計算には含まれない）
+    parseNum(f.teitoSetsu),
+    parseNum(f.jushoHenko),
+    parseNum(f.kenrishoPunshitsu),
+    parseNum(f.souzokuToroku),
     parseNum(f.ihinZanchi),
     parseNum(f.hikkoshi),
     parseNum(f.otherS),
+    // 旧フィールド（後方互換）
+    parseNum(f.otherS2),
+    parseNum(f.otherS3),
   ];
   return items.reduce((a, b) => a + b, 0);
 }
@@ -79,7 +84,9 @@ export function calcJotoZei(f) {
     + calcInshiBaibai(price)
     + parseNum(f.kaitai)
     + parseNum(f.sokuryo)
-    + parseNum(f.metshitsu);
+    + parseNum(f.metshitsu)
+    + parseNum(f.otherJoto)
+    + (f.ihinZanchiJoto !== false ? parseNum(f.ihinZanchi) : 0);
 
   const jotoShotoku = price - shotokuhi - jotoHiyo;
 

@@ -19,21 +19,27 @@ export const initSeller = {
   kanrisei: "",
   autoChukoS: true,
   manualChukoS: "",
-  teitoSetsu: "",
-  jushoHenko: "",
-  kenrishoPunshitsu: "",
-  otherS3: "",
-  otherS3Label: "その他",
+  // ── 譲渡費用OK（税額計算に算入）
   kaitai: "",
   metshitsu: "50000",
   sokuryo: "",
-  otherS2: "",
-  otherS2Label: "その他",
+  otherJoto: "",
+  otherJotoLabel: "その他（譲渡費用算入可）",
+  // ── 経費NG（手残りに影響・税額には含まれない）
+  teitoSetsu: "",
+  jushoHenko: "",
+  kenrishoPunshitsu: "",
+  souzokuToroku: "",
   ihinZanchi: "",
-  nebiki: "",
+  ihinZanchiJoto: true,   // true=譲渡費用に算入（デフォルト）
   hikkoshi: "",
   otherS: "",
   otherSLabel: "その他",
+  // 旧フィールド（後方互換）
+  otherS2: "", otherS2Label: "その他",
+  otherS3: "", otherS3Label: "その他",
+  nebiki: "",
+  // ── 譲渡所得税
   taxKubun: "long",
   shotokuhi5pct: true,
   shotokuhi: "",
@@ -103,7 +109,11 @@ export default function Seller({ seller, setS }) {
           <span style={{ fontSize: 15, fontWeight: 700, color: "#dc2626" }}>経　費（支出）</span>
         </div>
 
-        <Section title="■ 仲介費用" color="red">
+        {/* ── 譲渡費用OK ─────────────────────────── */}
+        <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: "10px 14px", marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#1d4ed8", marginBottom: 6 }}>
+            ✅ 譲渡費用（税額計算に算入・ここが多いほど税金が減る）
+          </div>
           <ToggleRow
             label="仲介手数料（消費税込）"
             autoValue={calcChuko(sellerPrice)}
@@ -111,43 +121,55 @@ export default function Seller({ seller, setS }) {
             onManualChange={v => setS("manualChukoS", v)}
             isAuto={seller.autoChukoS !== false}
             onToggle={v => setS("autoChukoS", v)}
-            autoNote="上限額自動計算（譲渡費用に算入）"
+            autoNote="上限額自動計算"
             note="実額を入力"
           />
-          <Row label="印紙代（売買契約書）" value={calcInshiBaibai(sellerPrice)} auto note="軽減税率適用（譲渡費用に算入）" />
-        </Section>
+          <Row label="印紙代（売買契約書）" value={calcInshiBaibai(sellerPrice)} auto note="軽減税率適用" />
+          <Row label="解体費用" value={seller.kaitai} onChange={v => setS("kaitai", v)} note="売却のために必要な場合" />
+          <Row label="建物滅失登記費用" value={seller.metshitsu} onChange={v => setS("metshitsu", v)} note="土地家屋調査士概算" />
+          <Row label="測量費用（確定測量等）" value={seller.sokuryo} onChange={v => setS("sokuryo", v)} />
+          {seller.ihinZanchiJoto !== false && (
+            <div>
+              <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="売買条件として必要な場合は算入可" />
+              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#1d4ed8", paddingLeft: 8, paddingBottom: 6, cursor: "pointer" }}>
+                <input type="checkbox" checked onChange={e => setS("ihinZanchiJoto", e.target.checked)} style={{ accentColor: "#1d4ed8" }} />
+                ✅ 譲渡費用として算入中　（チェックを外すとNG欄へ移動）
+              </label>
+            </div>
+          )}
+          <LabelRow
+            label={seller.otherJotoLabel}
+            value={seller.otherJoto}
+            onChange={(f, v) => f === "label" ? setS("otherJotoLabel", v) : setS("otherJoto", v)}
+            placeholder="その他（譲渡費用算入可）"
+          />
+        </div>
 
-        <Section title="■ 抵当権・ローン・登記" color="red">
+        {/* ── 経費NG ──────────────────────────────── */}
+        <div style={{ background: "#f9fafb", border: "1px solid #d1d5db", borderRadius: 8, padding: "10px 14px", marginBottom: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6 }}>
+            ❌ その他経費（手残りに影響・税額計算には含まれない）
+          </div>
           <Row label="抵当権抹消登記費用" value={seller.teitoSetsu} onChange={v => setS("teitoSetsu", v)} note="司法書士報酬込・概算" />
           <Row label="住所変更登記費用" value={seller.jushoHenko} onChange={v => setS("jushoHenko", v)} note="司法書士報酬込・概算" />
           <Row label="権利書紛失（本人確認情報）" value={seller.kenrishoPunshitsu} onChange={v => setS("kenrishoPunshitsu", v)} note="司法書士報酬概算" />
-          <LabelRow
-            label={seller.otherS3Label}
-            value={seller.otherS3}
-            onChange={(f, v) => f === "label" ? setS("otherS3Label", v) : setS("otherS3", v)}
-          />
-        </Section>
-
-        <Section title="■ 建物・土地" color="red">
-          <Row label="解体費用" value={seller.kaitai} onChange={v => setS("kaitai", v)} />
-          <Row label="建物滅失登記費用" value={seller.metshitsu} onChange={v => setS("metshitsu", v)} note="土地家屋調査士概算" />
-          <Row label="測量費用（確定測量等）" value={seller.sokuryo} onChange={v => setS("sokuryo", v)} />
-          <LabelRow
-            label={seller.otherS2Label}
-            value={seller.otherS2}
-            onChange={(f, v) => f === "label" ? setS("otherS2Label", v) : setS("otherS2", v)}
-          />
-        </Section>
-
-        <Section title="■ その他費用" color="red">
-          <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} />
+          <Row label="相続登記費用" value={seller.souzokuToroku} onChange={v => setS("souzokuToroku", v)} note="相続による所有権移転登記・司法書士報酬込" />
+          {seller.ihinZanchiJoto === false && (
+            <div>
+              <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="個人的な理由での処分は譲渡費用不可" />
+              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#6b7280", paddingLeft: 8, paddingBottom: 6, cursor: "pointer" }}>
+                <input type="checkbox" checked={false} onChange={e => setS("ihinZanchiJoto", e.target.checked)} style={{ accentColor: "#1d4ed8" }} />
+                ❌ 譲渡費用に算入しない　（チェックを入れるとOK欄へ移動）
+              </label>
+            </div>
+          )}
           <Row label="引越し費用" value={seller.hikkoshi} onChange={v => setS("hikkoshi", v)} />
           <LabelRow
             label={seller.otherSLabel}
             value={seller.otherS}
             onChange={(f, v) => f === "label" ? setS("otherSLabel", v) : setS("otherS", v)}
           />
-        </Section>
+        </div>
 
         {(() => {
           const exp = calcSellerExpense(seller);
