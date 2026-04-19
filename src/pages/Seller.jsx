@@ -406,70 +406,115 @@ export default function Seller({ seller, setS }) {
         );
       })()}
 
-      {/* ▼ 手取りサマリー */}
+      {/* ▼ 精算サマリー表 */}
       {(() => {
         const koteishisan = parseNum(seller.koteishisanS);
-        const kanri = parseNum(seller.kanrisei);
+        const kanri       = parseNum(seller.kanrisei);
         const incomeTotal = sellerPrice + koteishisan + kanri;
-        const expense = calcSellerExpense(seller);
-        const zenZei = incomeTotal - expense;
-        const final = zenZei - tax.zei;
+        const expense     = calcSellerExpense(seller);
+        const final       = incomeTotal - expense - tax.zei;
 
         if (!sellerPrice) return (
-          <div style={{ background: "linear-gradient(135deg,#1e3a5f,#1d4ed8)", borderRadius: 10, padding: "20px", textAlign: "center", color: "#93c5fd", fontSize: 13 }}>
+          <div style={{ background: "#f3f6fa", borderRadius: 10, padding: "20px", textAlign: "center", color: "#9ca3af", fontSize: 13, border: "1px dashed #d1d5db" }}>
             売却価格を入力すると計算されます
           </div>
         );
 
+        // 各経費項目
+        const chuko    = seller.autoChukoS !== false ? calcChuko(sellerPrice) : parseNum(seller.manualChukoS);
+        const inshi    = calcInshiBaibai(sellerPrice);
+        const kaitai   = parseNum(seller.kaitai);
+        const metsu    = parseNum(seller.metshitsu);
+        const sokuryo  = parseNum(seller.sokuryo);
+        const sozoku   = parseNum(seller.souzokuToroku);
+        const ihin     = seller.ihinZanchiJoto !== false ? parseNum(seller.ihinZanchi) : 0;
+        const otherJ   = parseNum(seller.otherJoto);
+        const teito    = parseNum(seller.teitoSetsu);
+        const jusho    = parseNum(seller.jushoHenko);
+        const kenri    = parseNum(seller.kenrishoPunshitsu);
+        const ihinNG   = seller.ihinZanchiJoto === false ? parseNum(seller.ihinZanchi) : 0;
+        const hikkoshi = parseNum(seller.hikkoshi);
+        const otherS   = parseNum(seller.otherS);
+
+        const Row2 = ({ label, value, indent, bold, headBg, headColor, total, borderTop }) => {
+          if (headBg) return (
+            <div style={{ background: headBg, color: headColor || "#fff", padding: "5px 12px", fontSize: 11, fontWeight: 700 }}>{label}</div>
+          );
+          const isTotal = total || bold;
+          return (
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "6px 12px", paddingLeft: indent ? 24 : 12,
+              borderTop: borderTop ? "2px solid #374151" : "1px solid #e5e7eb",
+              background: isTotal ? "#f8fafc" : "transparent",
+            }}>
+              <span style={{ fontSize: 12, fontWeight: isTotal ? 700 : 400, color: "#374151" }}>{label}</span>
+              <span style={{ fontSize: isTotal ? 14 : 12, fontWeight: isTotal ? 700 : 400, color: value?.startsWith("▲") ? "#dc2626" : "#111", fontVariantNumeric: "tabular-nums" }}>{value}</span>
+            </div>
+          );
+        };
+
+        const yen2  = n => n > 0 ? `¥${Math.round(n).toLocaleString()}` : "—";
+        const min2  = n => n > 0 ? `▲¥${Math.round(n).toLocaleString()}` : "—";
+
         return (
-          <div style={{ background: "linear-gradient(135deg,#1e3a5f,#1d4ed8)", borderRadius: 10, padding: "18px 20px", boxShadow: "0 4px 12px rgba(30,58,95,0.3)" }}>
-            <div style={{ fontSize: 11, color: "#93c5fd", marginBottom: 6 }}>① 譲渡所得税の計算</div>
-            <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: 8, padding: "12px 14px", fontSize: 12, color: "#e2e8f0", lineHeight: 2, marginBottom: 10 }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span>売却価格</span><span>¥{sellerPrice.toLocaleString()}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", color: "#fca5a5" }}>
-                <span>▲ 取得費{seller.shotokuhi5pct ? "（収入合計×5%）" : ""}</span>
-                <span>▲¥{Math.floor(tax.shotokuhi).toLocaleString()}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", color: "#fca5a5" }}>
-                <span>▲ 譲渡費用（仲介・印紙・解体・測量等）</span>
-                <span>▲¥{Math.floor(tax.jotoHiyo).toLocaleString()}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 4, marginTop: 2, fontWeight: 600 }}>
-                <span>譲渡所得</span><span>¥{Math.floor(tax.jotoShotoku).toLocaleString()}</span>
-              </div>
-              {tax.kojo > 0 && (
-                <div style={{ display: "flex", justifyContent: "space-between", color: "#fca5a5" }}>
-                  <span>▲ 特別控除（{[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）</span>
-                  <span>▲¥{tax.kojo.toLocaleString()}</span>
-                </div>
-              )}
-              <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 4, marginTop: 2, fontWeight: 600 }}>
-                <span>課税譲渡所得</span><span>¥{Math.floor(tax.kazeiShotoku).toLocaleString()}</span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", color: "#fca5a5" }}>
-                <span>× 税率（{
-                  seller.taxKubun === "short" ? "短期 39.63%" :
-                  seller.keigenZeiritsu ? (tax.kazeiShotoku > 60000000 ? "居住用軽減 14.21%/20.315%（6000万超部分）" : "居住用軽減 14.21%") :
-                  "長期 20.315%"
-                }）</span>
-                <span></span>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700, color: "#fca5a5", borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 4, marginTop: 2, fontSize: 13 }}>
-                <span>▲ 譲渡所得税額（概算）</span>
-                <span>▲¥{tax.zei.toLocaleString()}</span>
-              </div>
-              <div style={{ marginTop: 8, padding: "6px 10px", background: "rgba(251,191,36,0.15)", borderRadius: 6, border: "1px solid rgba(251,191,36,0.4)", fontSize: 11, color: "#fbbf24", lineHeight: 1.6 }}>
-                ⚠️ 上記は概算です。取得費・控除の適用可否・税額は必ず税理士にご確認ください。
-              </div>
+          <div style={{ background: "#fff", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.10)", overflow: "hidden", border: "1px solid #e5e7eb" }}>
+            <div style={{ background: "#1e3a5f", color: "#fff", padding: "10px 14px", fontSize: 13, fontWeight: 700, letterSpacing: "0.05em" }}>
+              📋 諸費用精算サマリー
             </div>
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 12, borderTop: "1px solid rgba(255,255,255,0.3)" }}>
-              <span style={{ color: "#fff", fontSize: 15, fontWeight: 700 }}>② 最終手残り概算</span>
-              <span style={{ color: "#fbbf24", fontSize: 26, fontWeight: 800 }}>
-                ¥{final.toLocaleString()}
-              </span>
+            {/* 収入 */}
+            <Row2 label="■ 収入" headBg="#15803d" />
+            <Row2 label="売却価格" value={yen2(sellerPrice)} indent />
+            {koteishisan > 0 && <Row2 label="固定資産税・都市計画税精算金" value={yen2(koteishisan)} indent />}
+            {kanri > 0       && <Row2 label="管理費・修繕積立金精算" value={yen2(kanri)} indent />}
+            <Row2 label="収入合計" value={yen2(incomeTotal)} bold borderTop />
+
+            {/* 経費 OK */}
+            <Row2 label="■ 経費　✅ 譲渡費用 or 取得費（税額計算に算入）" headBg="#1d4ed8" />
+            <Row2 label="仲介手数料（消費税込）" value={min2(chuko)} indent />
+            <Row2 label="印紙代（売買契約書）" value={min2(inshi)} indent />
+            {kaitai  > 0 && <Row2 label="解体費用" value={min2(kaitai)} indent />}
+            {metsu   > 0 && <Row2 label="建物滅失登記費用" value={min2(metsu)} indent />}
+            {sokuryo > 0 && <Row2 label="測量費用" value={min2(sokuryo)} indent />}
+            {sozoku  > 0 && <Row2 label="相続登記費用（取得費）" value={min2(sozoku)} indent />}
+            {ihin    > 0 && <Row2 label="遺品整理・残置物撤去費用" value={min2(ihin)} indent />}
+            {otherJ  > 0 && <Row2 label={seller.otherJotoLabel || "その他（譲渡費用算入可）"} value={min2(otherJ)} indent />}
+
+            {/* 経費 NG */}
+            <Row2 label="■ 経費　❌ その他経費（税額計算には含まれない）" headBg="#6b7280" />
+            {teito   > 0 && <Row2 label="抵当権抹消登記費用" value={min2(teito)} indent />}
+            {jusho   > 0 && <Row2 label="住所変更登記費用" value={min2(jusho)} indent />}
+            {kenri   > 0 && <Row2 label="権利書紛失（本人確認情報）" value={min2(kenri)} indent />}
+            {ihinNG  > 0 && <Row2 label="遺品整理・残置物撤去費用" value={min2(ihinNG)} indent />}
+            {hikkoshi> 0 && <Row2 label="引越し費用" value={min2(hikkoshi)} indent />}
+            {otherS  > 0 && <Row2 label={seller.otherSLabel || "その他"} value={min2(otherS)} indent />}
+            <Row2 label="経費合計（税除く）" value={min2(expense)} bold borderTop />
+
+            {/* 税引前 */}
+            <Row2 label="■ 税引前手残り" headBg="#0369a1" />
+            <Row2 label="税引前手残り（収入 ー 経費）" value={yen2(incomeTotal - expense)} bold />
+
+            {/* 譲渡所得税 */}
+            <Row2 label="■ 譲渡所得税（概算）" headBg="#4338ca" />
+            <Row2 label={`取得費${seller.shotokuhi5pct ? "（収入合計×5%）" : ""}`} value={min2(Math.floor(tax.shotokuhi))} indent />
+            <Row2 label="譲渡費用合計（仲介・印紙・解体・測量等）" value={min2(Math.floor(tax.jotoHiyo))} indent />
+            <Row2 label="譲渡所得" value={yen2(Math.floor(tax.jotoShotoku))} indent bold />
+            {tax.kojo > 0 && (
+              <Row2 label={`特別控除（${[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）`} value={min2(tax.kojo)} indent />
+            )}
+            <Row2 label="課税譲渡所得" value={yen2(Math.floor(tax.kazeiShotoku))} indent bold />
+            <Row2 label={`税率（${seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減 14.21%" : "長期 20.315%"}）`} value="" indent />
+            <Row2 label="譲渡所得税額（概算）" value={min2(tax.zei)} bold borderTop />
+
+            {/* 最終手残り */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: "#1e3a5f", borderTop: "2px solid #374151" }}>
+              <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>最終手残り概算</span>
+              <span style={{ color: "#fbbf24", fontSize: 24, fontWeight: 800 }}>¥{final.toLocaleString()}</span>
+            </div>
+
+            <div style={{ padding: "8px 12px", background: "#fffbeb", borderTop: "1px solid #fde68a", fontSize: 11, color: "#92400e", lineHeight: 1.7 }}>
+              ⚠️ 上記は概算です。取得費・控除の適用可否・税額は必ず税理士にご確認ください。
             </div>
           </div>
         );
