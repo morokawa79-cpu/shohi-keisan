@@ -508,10 +508,11 @@ export default function Seller({ seller, setS }) {
                   {incomeRows.map(r => (
                     <tr key={r.no}><td style={noTd}>{r.no}</td><td style={tdL}>{r.label}</td><td style={tdR}>{r.value}</td><td style={tdL}>{r.note}</td></tr>
                   ))}
-                  <tr style={subT}>
-                    <td colSpan={2} style={{ ...tdR, ...subT }}>小　計</td>
-                    <td style={{ ...tdR, ...subT }}>{yen2(incomeTotal)}</td>
-                    <td style={tdL}></td>
+                  <tr style={{ background: "#f0fdf4" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#15803d", fontSize: 14 }}>①</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#15803d", background: "#f0fdf4" }}>収入合計</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#15803d", background: "#f0fdf4" }}>{yen2(incomeTotal)}</td>
+                    <td style={{ ...tdL, background: "#f0fdf4" }}></td>
                   </tr>
                 </tbody>
               </table>
@@ -549,10 +550,11 @@ export default function Seller({ seller, setS }) {
               {/* 支出小計・税引前 */}
               <table style={tbl}>{colGroup}
                 <tbody>
-                  <tr style={subT}>
-                    <td colSpan={2} style={{ ...tdR, ...subT, borderTop: "2px solid #9ca3af" }}>支出　小　計</td>
-                    <td style={{ ...tdR, ...subT, borderTop: "2px solid #9ca3af" }}>{min2(expense)}</td>
-                    <td style={{ ...tdL, borderTop: "2px solid #9ca3af" }}></td>
+                  <tr style={{ background: "#fef2f2" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 14, borderTop: "2px solid #9ca3af" }}>②</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#dc2626", background: "#fef2f2", borderTop: "2px solid #9ca3af" }}>経費合計（税除く）</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#dc2626", background: "#fef2f2", borderTop: "2px solid #9ca3af" }}>{min2(expense)}</td>
+                    <td style={{ ...tdL, background: "#fef2f2", borderTop: "2px solid #9ca3af" }}></td>
                   </tr>
                   <tr>
                     <td colSpan={2} style={{ ...tdR, fontWeight: 700, background: "#f0fdf4", color: "#15803d" }}>税引前手残り（収入 ー 支出）</td>
@@ -586,28 +588,46 @@ export default function Seller({ seller, setS }) {
                   )}
                   <tr style={subT}><td colSpan={2} style={{ ...tdR, ...subT }}>課税譲渡所得</td><td style={{ ...tdR, ...subT }}>{yen2(Math.floor(tax.kazeiShotoku))}</td><td style={tdL}></td></tr>
                   <tr><td style={noTd}>×</td><td style={tdL}>税率</td><td style={tdR}>{taxLabel}</td><td style={tdL}></td></tr>
-                  <tr>
-                    <td style={noTd}>▲</td>
-                    <td style={{ ...tdL, fontWeight: 700, background: "#f5f3ff" }}>譲渡所得税額（概算）</td>
+                  <tr style={{ background: "#f5f3ff" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 14 }}>③</td>
+                    <td style={{ ...tdL, fontWeight: 700, background: "#f5f3ff", color: "#4338ca" }}>譲渡所得税額（概算）</td>
                     <td style={{ ...tdR, fontWeight: 700, color: "#4338ca", background: "#f5f3ff" }}>{min2(tax.zei)}</td>
                     <td style={{ ...tdL, background: "#f5f3ff" }}></td>
                   </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* ─── 最終手残り（縦表） ─── */}
+            <div style={{ borderRadius: 8, overflow: "hidden", border: "2px solid #1e3a5f", boxShadow: "0 2px 8px rgba(30,58,95,0.15)", marginTop: 12 }}>
+              <div style={{ background: "#1e3a5f", color: "#fff", padding: "7px 12px", fontSize: 12, fontWeight: 700 }}>
+                精算まとめ
+              </div>
+              <table style={{ ...tbl }}>
+                <colgroup><col style={{ width: 36 }} /><col /><col style={{ width: "35%" }} /></colgroup>
+                <tbody>
+                  <tr style={{ background: "#f0fdf4" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#15803d", fontSize: 15 }}>①</td>
+                    <td style={{ ...tdL, color: "#15803d", fontWeight: 600 }}>収入合計</td>
+                    <td style={{ ...tdR, color: "#15803d", fontWeight: 700 }}>{yen2(incomeTotal)}</td>
+                  </tr>
+                  <tr style={{ background: "#fef2f2" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>②</td>
+                    <td style={{ ...tdL, color: "#dc2626", fontWeight: 600 }}>経費合計（税除く）</td>
+                    <td style={{ ...tdR, color: "#dc2626", fontWeight: 700 }}>{min2(expense)}</td>
+                  </tr>
+                  <tr style={{ background: "#f5f3ff" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>③</td>
+                    <td style={{ ...tdL, color: "#4338ca", fontWeight: 600 }}>譲渡所得税（概算）</td>
+                    <td style={{ ...tdR, color: "#4338ca", fontWeight: 700 }}>{min2(tax.zei)}</td>
+                  </tr>
                   <tr style={{ background: "#1e3a5f" }}>
-                    <td colSpan={4} style={{ padding: "10px 12px", background: "#1e3a5f", border: "1px solid #374151" }}>
-                      <div style={{ fontSize: 11, color: "#93c5fd", marginBottom: 4, fontWeight: 600 }}>最終手残り概算</div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", fontSize: 12 }}>
-                        <span style={{ color: "#bbf7d0" }}>{yen2(incomeTotal)}</span>
-                        <span style={{ color: "#9ca3af" }}>（収入）</span>
-                        <span style={{ color: "#fff", fontWeight: 700 }}>－</span>
-                        <span style={{ color: "#fca5a5" }}>{yen2(expense)}</span>
-                        <span style={{ color: "#9ca3af" }}>（経費）</span>
-                        <span style={{ color: "#fff", fontWeight: 700 }}>－</span>
-                        <span style={{ color: "#c4b5fd" }}>{yen2(tax.zei)}</span>
-                        <span style={{ color: "#9ca3af" }}>（譲渡所得税）</span>
-                        <span style={{ color: "#fff", fontWeight: 700 }}>＝</span>
-                        <span style={{ color: "#fbbf24", fontWeight: 800, fontSize: 18 }}>{yen2(final)}</span>
-                      </div>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#fbbf24", fontSize: 16, background: "#1e3a5f", border: "1px solid #374151" }}>＝</td>
+                    <td style={{ ...tdL, background: "#1e3a5f", color: "#fff", fontWeight: 700, fontSize: 13, border: "1px solid #374151" }}>
+                      最終手残り概算
+                      <span style={{ fontSize: 11, color: "#93c5fd", marginLeft: 8, fontWeight: 400 }}>①－②－③</span>
                     </td>
+                    <td style={{ ...tdR, background: "#1e3a5f", color: "#fbbf24", fontWeight: 800, fontSize: 18, border: "1px solid #374151" }}>{yen2(final)}</td>
                   </tr>
                 </tbody>
               </table>
