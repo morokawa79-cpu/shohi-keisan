@@ -556,10 +556,14 @@ export default function Seller({ seller, setS }) {
                     <td style={{ ...tdR, fontWeight: 700, color: "#dc2626", background: "#fef2f2", borderTop: "2px solid #9ca3af" }}>{min2(expense)}</td>
                     <td style={{ ...tdL, background: "#fef2f2", borderTop: "2px solid #9ca3af" }}></td>
                   </tr>
-                  <tr>
-                    <td colSpan={2} style={{ ...tdR, fontWeight: 700, background: "#f0fdf4", color: "#15803d" }}>税引前手残り（収入 ー 支出）</td>
-                    <td style={{ ...tdR, fontWeight: 700, background: "#f0fdf4", color: "#15803d" }}>{yen2(incomeTotal - expense)}</td>
-                    <td style={{ ...tdL, background: "#f0fdf4" }}></td>
+                  <tr style={{ background: "#e0f2fe" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#0369a1", fontSize: 13, background: "#e0f2fe" }}>＝</td>
+                    <td style={{ ...tdL, fontWeight: 700, color: "#0369a1", background: "#e0f2fe" }}>
+                      税引前手残り
+                      <span style={{ fontSize: 11, color: "#0284c7", marginLeft: 6, fontWeight: 400 }}>①－②</span>
+                    </td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#0369a1", background: "#e0f2fe", fontSize: 14 }}>{yen2(incomeTotal - expense)}</td>
+                    <td style={{ ...tdL, background: "#e0f2fe" }}></td>
                   </tr>
                 </tbody>
               </table>
