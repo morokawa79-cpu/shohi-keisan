@@ -593,9 +593,21 @@ export default function Seller({ seller, setS }) {
                     <td style={{ ...tdL, background: "#f5f3ff" }}></td>
                   </tr>
                   <tr style={{ background: "#1e3a5f" }}>
-                    <td colSpan={2} style={{ ...tdR, background: "#1e3a5f", color: "#fff", fontWeight: 700, fontSize: 13 }}>最終手残り概算</td>
-                    <td style={{ ...tdR, background: "#1e3a5f", color: "#fbbf24", fontWeight: 800, fontSize: 15 }}>{yen2(final)}</td>
-                    <td style={{ ...tdL, background: "#1e3a5f", border: "1px solid #374151" }}></td>
+                    <td colSpan={4} style={{ padding: "10px 12px", background: "#1e3a5f", border: "1px solid #374151" }}>
+                      <div style={{ fontSize: 11, color: "#93c5fd", marginBottom: 4, fontWeight: 600 }}>最終手残り概算</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", fontSize: 12 }}>
+                        <span style={{ color: "#bbf7d0" }}>{yen2(incomeTotal)}</span>
+                        <span style={{ color: "#9ca3af" }}>（収入）</span>
+                        <span style={{ color: "#fff", fontWeight: 700 }}>－</span>
+                        <span style={{ color: "#fca5a5" }}>{yen2(expense)}</span>
+                        <span style={{ color: "#9ca3af" }}>（経費）</span>
+                        <span style={{ color: "#fff", fontWeight: 700 }}>－</span>
+                        <span style={{ color: "#c4b5fd" }}>{yen2(tax.zei)}</span>
+                        <span style={{ color: "#9ca3af" }}>（譲渡所得税）</span>
+                        <span style={{ color: "#fff", fontWeight: 700 }}>＝</span>
+                        <span style={{ color: "#fbbf24", fontWeight: 800, fontSize: 18 }}>{yen2(final)}</span>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
