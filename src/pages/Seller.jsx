@@ -436,84 +436,177 @@ export default function Seller({ seller, setS }) {
         const hikkoshi = parseNum(seller.hikkoshi);
         const otherS   = parseNum(seller.otherS);
 
-        const Row2 = ({ label, value, indent, bold, headBg, headColor, total, borderTop }) => {
-          if (headBg) return (
-            <div style={{ background: headBg, color: headColor || "#fff", padding: "5px 12px", fontSize: 11, fontWeight: 700 }}>{label}</div>
-          );
-          const isTotal = total || bold;
-          return (
-            <div style={{
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: "6px 12px", paddingLeft: indent ? 24 : 12,
-              borderTop: borderTop ? "2px solid #374151" : "1px solid #e5e7eb",
-              background: isTotal ? "#f8fafc" : "transparent",
-            }}>
-              <span style={{ fontSize: 12, fontWeight: isTotal ? 700 : 400, color: "#374151" }}>{label}</span>
-              <span style={{ fontSize: isTotal ? 14 : 12, fontWeight: isTotal ? 700 : 400, color: value?.startsWith("▲") ? "#dc2626" : "#111", fontVariantNumeric: "tabular-nums" }}>{value}</span>
-            </div>
-          );
-        };
+        const yen2 = n => n > 0 ? `${Math.round(n).toLocaleString()}円` : "";
+        const min2 = n => n > 0 ? `${Math.round(n).toLocaleString()}円` : "";
 
-        const yen2  = n => n > 0 ? `¥${Math.round(n).toLocaleString()}` : "—";
-        const min2  = n => n > 0 ? `▲¥${Math.round(n).toLocaleString()}` : "—";
+        // テーブルスタイル
+        const tbl  = { width: "100%", borderCollapse: "collapse", fontSize: 12, tableLayout: "fixed" };
+        const th   = { background: "#dbeafe", padding: "5px 8px", border: "1px solid #9ca3af", fontWeight: 700, fontSize: 11, textAlign: "center" };
+        const tdL  = { padding: "4px 8px", border: "1px solid #d1d5db", verticalAlign: "middle" };
+        const tdR  = { padding: "4px 8px", border: "1px solid #d1d5db", textAlign: "right", verticalAlign: "middle", fontVariantNumeric: "tabular-nums" };
+        const secH = (bg) => ({ background: bg, color: "#fff", padding: "4px 8px", border: "1px solid #9ca3af", fontWeight: 700, fontSize: 11 });
+        const subT = { background: "#f3f4f6", fontWeight: 700 };
+        const noTd = { padding: "4px 6px", border: "1px solid #d1d5db", textAlign: "center", color: "#6b7280", width: 28 };
+
+        // 収入行
+        let incomeRows = [];
+        let iNo = 1;
+        incomeRows.push({ no: iNo++, label: "売却価格", value: yen2(sellerPrice), note: "" });
+        if (koteishisan > 0) incomeRows.push({ no: iNo++, label: "固定資産税・都市計画税精算金", value: yen2(koteishisan), note: "決済日で日割り計算" });
+        if (kanri > 0)       incomeRows.push({ no: iNo++, label: "管理費・修繕積立金精算",     value: yen2(kanri),        note: "決済日で日割り計算" });
+
+        // 支出行（OK）
+        let expOKRows = [];
+        let eNo = 1;
+        expOKRows.push({ no: eNo++, label: "仲介手数料（消費税込）", value: min2(chuko), note: "決済時にお支払い" });
+        expOKRows.push({ no: eNo++, label: "収入印紙（売買契約書）",  value: min2(inshi), note: "軽減税率適用" });
+        if (kaitai  > 0) expOKRows.push({ no: eNo++, label: "解体費用",             value: min2(kaitai),  note: "" });
+        if (metsu   > 0) expOKRows.push({ no: eNo++, label: "建物滅失登記費用",     value: min2(metsu),   note: "土地家屋調査士・概算" });
+        if (sokuryo > 0) expOKRows.push({ no: eNo++, label: "測量費用",             value: min2(sokuryo), note: "" });
+        if (sozoku  > 0) expOKRows.push({ no: eNo++, label: "相続登記費用（取得費）", value: min2(sozoku), note: "司法書士報酬込・概算" });
+        if (ihin    > 0) expOKRows.push({ no: eNo++, label: "遺品整理・残置物撤去費用", value: min2(ihin), note: "買主要求による" });
+        if (otherJ  > 0) expOKRows.push({ no: eNo++, label: seller.otherJotoLabel || "その他（譲渡費用算入可）", value: min2(otherJ), note: "" });
+
+        // 支出行（NG）
+        let expNGRows = [];
+        let nNo = eNo;
+        if (teito    > 0) expNGRows.push({ no: nNo++, label: "抵当権抹消登記費用",         value: min2(teito),    note: "司法書士報酬込・概算" });
+        if (jusho    > 0) expNGRows.push({ no: nNo++, label: "住所変更登記費用",           value: min2(jusho),    note: "司法書士報酬込・概算" });
+        if (kenri    > 0) expNGRows.push({ no: nNo++, label: "権利書紛失（本人確認情報）", value: min2(kenri),    note: "司法書士報酬・概算" });
+        if (ihinNG   > 0) expNGRows.push({ no: nNo++, label: "遺品整理・残置物撤去費用",   value: min2(ihinNG),   note: "" });
+        if (hikkoshi > 0) expNGRows.push({ no: nNo++, label: "引越し費用",               value: min2(hikkoshi), note: "" });
+        if (otherS   > 0) expNGRows.push({ no: nNo++, label: seller.otherSLabel || "その他", value: min2(otherS), note: "" });
+
+        const taxLabel = seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減 14.21%" : "長期 20.315%";
 
         return (
-          <div style={{ background: "#fff", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.10)", overflow: "hidden", border: "1px solid #e5e7eb" }}>
-            <div style={{ background: "#1e3a5f", color: "#fff", padding: "10px 14px", fontSize: 13, fontWeight: 700, letterSpacing: "0.05em" }}>
+          <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #9ca3af", boxShadow: "0 2px 6px rgba(0,0,0,0.08)" }}>
+            {/* タイトル */}
+            <div style={{ background: "#1e3a5f", color: "#fff", padding: "8px 12px", fontSize: 13, fontWeight: 700 }}>
               📋 諸費用精算サマリー
             </div>
 
-            {/* 収入 */}
-            <Row2 label="■ 収入" headBg="#15803d" />
-            <Row2 label="売却価格" value={yen2(sellerPrice)} indent />
-            {koteishisan > 0 && <Row2 label="固定資産税・都市計画税精算金" value={yen2(koteishisan)} indent />}
-            {kanri > 0       && <Row2 label="管理費・修繕積立金精算" value={yen2(kanri)} indent />}
-            <Row2 label="収入合計" value={yen2(incomeTotal)} bold borderTop />
+            {/* ─── 収入の部 ─── */}
+            <table style={tbl}>
+              <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>
+              <thead>
+                <tr>
+                  <td colSpan={4} style={secH("#15803d")}>収入の部</td>
+                </tr>
+                <tr>
+                  <th style={th}>No.</th>
+                  <th style={th}>収入名目</th>
+                  <th style={{ ...th, textAlign: "right" }}>金　額</th>
+                  <th style={th}>備　考</th>
+                </tr>
+              </thead>
+              <tbody>
+                {incomeRows.map(r => (
+                  <tr key={r.no}>
+                    <td style={noTd}>{r.no}</td>
+                    <td style={tdL}>{r.label}</td>
+                    <td style={tdR}>{r.value}</td>
+                    <td style={tdL}>{r.note}</td>
+                  </tr>
+                ))}
+                <tr style={subT}>
+                  <td colSpan={2} style={{ ...tdR, ...subT }}>小　計</td>
+                  <td style={{ ...tdR, ...subT }}>{yen2(incomeTotal)}</td>
+                  <td style={tdL}></td>
+                </tr>
+              </tbody>
+            </table>
 
-            {/* 経費 OK */}
-            <Row2 label="■ 経費　✅ 譲渡費用 or 取得費（税額計算に算入）" headBg="#1d4ed8" />
-            <Row2 label="仲介手数料（消費税込）" value={min2(chuko)} indent />
-            <Row2 label="印紙代（売買契約書）" value={min2(inshi)} indent />
-            {kaitai  > 0 && <Row2 label="解体費用" value={min2(kaitai)} indent />}
-            {metsu   > 0 && <Row2 label="建物滅失登記費用" value={min2(metsu)} indent />}
-            {sokuryo > 0 && <Row2 label="測量費用" value={min2(sokuryo)} indent />}
-            {sozoku  > 0 && <Row2 label="相続登記費用（取得費）" value={min2(sozoku)} indent />}
-            {ihin    > 0 && <Row2 label="遺品整理・残置物撤去費用" value={min2(ihin)} indent />}
-            {otherJ  > 0 && <Row2 label={seller.otherJotoLabel || "その他（譲渡費用算入可）"} value={min2(otherJ)} indent />}
+            {/* ─── 支出の部（OK） ─── */}
+            <table style={{ ...tbl, marginTop: 0 }}>
+              <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>
+              <thead>
+                <tr><td colSpan={4} style={secH("#1d4ed8")}>支出の部　✅ 譲渡費用 or 取得費（税額計算に算入）</td></tr>
+                <tr>
+                  <th style={th}>No.</th><th style={th}>支出名目</th>
+                  <th style={{ ...th, textAlign: "right" }}>金　額</th><th style={th}>備　考</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expOKRows.map(r => (
+                  <tr key={r.no}><td style={noTd}>{r.no}</td><td style={tdL}>{r.label}</td><td style={tdR}>{r.value}</td><td style={tdL}>{r.note}</td></tr>
+                ))}
+              </tbody>
+            </table>
 
-            {/* 経費 NG */}
-            <Row2 label="■ 経費　❌ その他経費（税額計算には含まれない）" headBg="#6b7280" />
-            {teito   > 0 && <Row2 label="抵当権抹消登記費用" value={min2(teito)} indent />}
-            {jusho   > 0 && <Row2 label="住所変更登記費用" value={min2(jusho)} indent />}
-            {kenri   > 0 && <Row2 label="権利書紛失（本人確認情報）" value={min2(kenri)} indent />}
-            {ihinNG  > 0 && <Row2 label="遺品整理・残置物撤去費用" value={min2(ihinNG)} indent />}
-            {hikkoshi> 0 && <Row2 label="引越し費用" value={min2(hikkoshi)} indent />}
-            {otherS  > 0 && <Row2 label={seller.otherSLabel || "その他"} value={min2(otherS)} indent />}
-            <Row2 label="経費合計（税除く）" value={min2(expense)} bold borderTop />
-
-            {/* 税引前 */}
-            <Row2 label="■ 税引前手残り" headBg="#0369a1" />
-            <Row2 label="税引前手残り（収入 ー 経費）" value={yen2(incomeTotal - expense)} bold />
-
-            {/* 譲渡所得税 */}
-            <Row2 label="■ 譲渡所得税（概算）" headBg="#4338ca" />
-            <Row2 label={`取得費${seller.shotokuhi5pct ? "（収入合計×5%）" : ""}`} value={min2(Math.floor(tax.shotokuhi))} indent />
-            <Row2 label="譲渡費用合計（仲介・印紙・解体・測量等）" value={min2(Math.floor(tax.jotoHiyo))} indent />
-            <Row2 label="譲渡所得" value={yen2(Math.floor(tax.jotoShotoku))} indent bold />
-            {tax.kojo > 0 && (
-              <Row2 label={`特別控除（${[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）`} value={min2(tax.kojo)} indent />
+            {/* ─── 支出の部（NG） ─── */}
+            {expNGRows.length > 0 && (
+              <table style={{ ...tbl, marginTop: 0 }}>
+                <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>
+                <thead>
+                  <tr><td colSpan={4} style={secH("#6b7280")}>支出の部　❌ その他経費（税額計算には含まれない）</td></tr>
+                </thead>
+                <tbody>
+                  {expNGRows.map(r => (
+                    <tr key={r.no}><td style={noTd}>{r.no}</td><td style={tdL}>{r.label}</td><td style={tdR}>{r.value}</td><td style={tdL}>{r.note}</td></tr>
+                  ))}
+                </tbody>
+              </table>
             )}
-            <Row2 label="課税譲渡所得" value={yen2(Math.floor(tax.kazeiShotoku))} indent bold />
-            <Row2 label={`税率（${seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減 14.21%" : "長期 20.315%"}）`} value="" indent />
-            <Row2 label="譲渡所得税額（概算）" value={min2(tax.zei)} bold borderTop />
+
+            {/* 経費小計・税引前 */}
+            <table style={{ ...tbl, marginTop: 0 }}>
+              <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>
+              <tbody>
+                <tr style={subT}>
+                  <td colSpan={2} style={{ ...tdR, ...subT, borderTop: "2px solid #9ca3af" }}>支出　小　計</td>
+                  <td style={{ ...tdR, ...subT, borderTop: "2px solid #9ca3af" }}>{min2(expense)}</td>
+                  <td style={{ ...tdL, borderTop: "2px solid #9ca3af" }}></td>
+                </tr>
+                <tr style={{ background: "#eff6ff" }}>
+                  <td colSpan={2} style={{ ...tdR, fontWeight: 700, background: "#eff6ff" }}>税引前手残り（収入 ー 支出）</td>
+                  <td style={{ ...tdR, fontWeight: 700, background: "#eff6ff" }}>{yen2(incomeTotal - expense)}</td>
+                  <td style={tdL}></td>
+                </tr>
+              </tbody>
+            </table>
+
+            {/* ─── 譲渡所得税 ─── */}
+            <table style={{ ...tbl, marginTop: 0 }}>
+              <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>
+              <thead>
+                <tr><td colSpan={4} style={secH("#4338ca")}>譲渡所得税の計算（概算）</td></tr>
+              </thead>
+              <tbody>
+                <tr><td style={noTd}></td><td style={tdL}>売却価格（収入合計）</td><td style={tdR}>{yen2(tax.totalIncome || incomeTotal)}</td><td style={tdL}></td></tr>
+                <tr><td style={noTd}>▲</td><td style={tdL}>{`取得費${seller.shotokuhi5pct ? "（収入合計×5%）" : ""}`}</td><td style={{ ...tdR, color: "#dc2626" }}>{min2(Math.floor(tax.shotokuhi))}</td><td style={tdL}></td></tr>
+                <tr><td style={noTd}>▲</td><td style={tdL}>譲渡費用合計</td><td style={{ ...tdR, color: "#dc2626" }}>{min2(Math.floor(tax.jotoHiyo))}</td><td style={tdL}></td></tr>
+                <tr style={subT}><td colSpan={2} style={{ ...tdR, ...subT }}>譲渡所得</td><td style={{ ...tdR, ...subT }}>{yen2(Math.floor(tax.jotoShotoku))}</td><td style={tdL}></td></tr>
+                {tax.kojo > 0 && (
+                  <tr><td style={noTd}>▲</td>
+                    <td style={tdL}>特別控除（{[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）</td>
+                    <td style={{ ...tdR, color: "#dc2626" }}>{min2(tax.kojo)}</td><td style={tdL}></td>
+                  </tr>
+                )}
+                <tr style={subT}><td colSpan={2} style={{ ...tdR, ...subT }}>課税譲渡所得</td><td style={{ ...tdR, ...subT }}>{yen2(Math.floor(tax.kazeiShotoku))}</td><td style={tdL}></td></tr>
+                <tr><td style={noTd}>×</td><td style={tdL}>税率</td><td style={tdR}>{taxLabel}</td><td style={tdL}></td></tr>
+                <tr style={{ background: "#f5f3ff" }}>
+                  <td style={noTd}>▲</td>
+                  <td style={{ ...tdL, fontWeight: 700, background: "#f5f3ff" }}>譲渡所得税額（概算）</td>
+                  <td style={{ ...tdR, fontWeight: 700, color: "#dc2626", background: "#f5f3ff" }}>{min2(tax.zei)}</td>
+                  <td style={tdL}></td>
+                </tr>
+              </tbody>
+            </table>
 
             {/* 最終手残り */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px", background: "#1e3a5f", borderTop: "2px solid #374151" }}>
-              <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>最終手残り概算</span>
-              <span style={{ color: "#fbbf24", fontSize: 24, fontWeight: 800 }}>¥{final.toLocaleString()}</span>
-            </div>
+            <table style={{ ...tbl, marginTop: 0 }}>
+              <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>
+              <tbody>
+                <tr style={{ background: "#1e3a5f" }}>
+                  <td colSpan={2} style={{ ...tdR, background: "#1e3a5f", color: "#fff", fontWeight: 700, fontSize: 13, borderTop: "2px solid #374151" }}>最終手残り概算</td>
+                  <td style={{ ...tdR, background: "#1e3a5f", color: "#fbbf24", fontWeight: 800, fontSize: 15, borderTop: "2px solid #374151" }}>{yen2(final)}</td>
+                  <td style={{ ...tdL, background: "#1e3a5f", borderTop: "2px solid #374151" }}></td>
+                </tr>
+              </tbody>
+            </table>
 
-            <div style={{ padding: "8px 12px", background: "#fffbeb", borderTop: "1px solid #fde68a", fontSize: 11, color: "#92400e", lineHeight: 1.7 }}>
+            <div style={{ padding: "7px 10px", background: "#fffbeb", borderTop: "1px solid #fde68a", fontSize: 11, color: "#92400e" }}>
               ⚠️ 上記は概算です。取得費・控除の適用可否・税額は必ず税理士にご確認ください。
             </div>
           </div>
