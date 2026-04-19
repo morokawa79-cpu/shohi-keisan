@@ -614,12 +614,12 @@ export default function Seller({ seller, setS }) {
                   <tr style={{ background: "#fef2f2" }}>
                     <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>②</td>
                     <td style={{ ...tdL, color: "#dc2626", fontWeight: 600 }}>経費合計（税除く）</td>
-                    <td style={{ ...tdR, color: "#dc2626", fontWeight: 700 }}>{min2(expense)}</td>
+                    <td style={{ ...tdR, color: "#dc2626", fontWeight: 700 }}>▲{min2(expense)}</td>
                   </tr>
                   <tr style={{ background: "#f5f3ff" }}>
                     <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>③</td>
                     <td style={{ ...tdL, color: "#4338ca", fontWeight: 600 }}>譲渡所得税（概算）</td>
-                    <td style={{ ...tdR, color: "#4338ca", fontWeight: 700 }}>{min2(tax.zei)}</td>
+                    <td style={{ ...tdR, color: "#4338ca", fontWeight: 700 }}>▲{min2(tax.zei)}</td>
                   </tr>
                   <tr style={{ background: "#1e3a5f" }}>
                     <td style={{ ...noTd, fontWeight: 800, color: "#fbbf24", fontSize: 16, background: "#1e3a5f", border: "1px solid #374151" }}>＝</td>
