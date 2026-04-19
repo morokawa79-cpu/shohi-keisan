@@ -11,8 +11,8 @@ export default function ToggleRow({ label, autoValue, manualValue, onManualChang
       </div>
       <label style={{ display: "flex", alignItems: "center", gap: 3, cursor: "pointer", whiteSpace: "nowrap" }}>
         <input type="checkbox" checked={isAuto} onChange={e => onToggle(e.target.checked)}
-          style={{ width: 14, height: 14, accentColor: "#4f46e5" }} />
-        <span style={{ fontSize: 10, color: isAuto ? "#4f46e5" : "#9ca3af", fontWeight: 600 }}>{mode}</span>
+          style={{ width: 14, height: 14, accentColor: "#1e3a5f" }} />
+        <span style={{ fontSize: 10, color: isAuto ? "#1e3a5f" : "#9ca3af", fontWeight: 600 }}>{mode}</span>
       </label>
       <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
         {isAuto ? (

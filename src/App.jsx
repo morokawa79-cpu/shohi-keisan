@@ -81,7 +81,7 @@ export default function App() {
           .print-only { display: block !important; }
         }
         .print-only { display: none; }
-        input:focus { border-color: #4f46e5 !important; box-shadow: 0 0 0 2px #c7d2fe; }
+        input:focus { border-color: #1e3a5f !important; box-shadow: 0 0 0 2px #bfd0e4; }
         input, select, textarea { font-size: 16px !important; }
       `}</style>
 
@@ -90,29 +90,29 @@ export default function App() {
 
       {/* ヘッダー */}
       <div className="no-print" style={{
-        background: "#111827",
+        background: "#1e3a5f",
         padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between",
-        borderBottom: "1px solid #1f2937"
+        borderBottom: "2px solid #d4a744"
       }}>
         <div>
-          <div style={{ color: "#9ca3af", fontSize: 10, letterSpacing: "0.15em", fontWeight: 500 }}>REAL ESTATE</div>
-          <div style={{ color: "#fff", fontSize: 17, fontWeight: 700, letterSpacing: "0.03em" }}>諸費用計算書</div>
+          <div style={{ color: "#d4a744", fontSize: 10, letterSpacing: "0.2em", fontWeight: 600 }}>REAL ESTATE</div>
+          <div style={{ color: "#fff", fontSize: 17, fontWeight: 700, letterSpacing: "0.05em" }}>諸費用計算書</div>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={() => setShowList(!showList)} style={{
-            padding: "6px 14px", background: "transparent", border: "1px solid #374151",
-            borderRadius: 6, color: "#d1d5db", fontSize: 12, cursor: "pointer"
+            padding: "6px 14px", background: "transparent", border: "1px solid rgba(212,167,68,0.4)",
+            borderRadius: 6, color: "#e0e7ee", fontSize: 12, cursor: "pointer"
           }}>📁 過去案件</button>
           <button onClick={handleSave} disabled={saving} style={{
-            padding: "6px 14px", background: "transparent", border: "1px solid #374151",
-            borderRadius: 6, color: "#d1d5db", fontSize: 12, fontWeight: 500, cursor: "pointer"
+            padding: "6px 14px", background: "transparent", border: "1px solid rgba(212,167,68,0.4)",
+            borderRadius: 6, color: "#e0e7ee", fontSize: 12, fontWeight: 500, cursor: "pointer"
           }}>{saving ? "保存中…" : "💾 保存"}</button>
           <button onClick={() => {
             try { window.print(); }
             catch { alert("印刷はブラウザのショートカット（Windows: Ctrl+P / Mac: Cmd+P）をお使いください"); }
           }} style={{
-            padding: "6px 14px", background: "#4f46e5", border: "1px solid #4f46e5",
-            borderRadius: 6, color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer"
+            padding: "6px 14px", background: "#d4a744", border: "1px solid #d4a744",
+            borderRadius: 6, color: "#1e3a5f", fontSize: 12, fontWeight: 700, cursor: "pointer"
           }}>🖨️ 印刷 (Ctrl+P)</button>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function App() {
               </div>
               <div style={{ display: "flex", gap: 6 }}>
                 <button onClick={() => handleLoad(c)} style={{
-                  padding: "3px 10px", background: "#4f46e5", border: "none", borderRadius: 4, color: "#fff", fontSize: 12, cursor: "pointer"
+                  padding: "3px 10px", background: "#1e3a5f", border: "none", borderRadius: 4, color: "#fff", fontSize: 12, cursor: "pointer"
                 }}>読込</button>
                 <button onClick={() => handleDelete(c.id)} style={{
                   padding: "3px 10px", background: "#fff", border: "1px solid #e5e7eb", borderRadius: 4, color: "#6b7280", fontSize: 12, cursor: "pointer"
@@ -156,10 +156,10 @@ export default function App() {
         {[["seller", "🏠 売主向け"], ["buyer", "🔑 買主向け"]].map(([key, label]) => (
           <button key={key} onClick={() => setTab(key)} style={{
             flex: 1, padding: "14px", border: "none",
-            borderBottom: tab === key ? "2px solid #4f46e5" : "2px solid transparent",
+            borderBottom: tab === key ? "2px solid #1e3a5f" : "2px solid transparent",
             background: "#fff",
             fontSize: 14, fontWeight: tab === key ? 700 : 500,
-            color: tab === key ? "#4f46e5" : "#6b7280",
+            color: tab === key ? "#1e3a5f" : "#6b7280",
             cursor: "pointer", transition: "all 0.15s",
             letterSpacing: "0.03em"
           }}>{label}</button>
