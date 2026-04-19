@@ -47,14 +47,14 @@ function SellerPrint({ seller }) {
     <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 20 }}>
       <tbody>
         {/* 収入 */}
-        <SectionHead label="■ 収入" color="#15803d" />
+        <SectionHead label="■ 収入" color="#1e3a5f" />
         <Row label="売却価格" value={yen(price)} indent />
         {koteishi > 0 && <Row label="固定資産税・都市計画税精算金" value={yen(koteishi)} indent />}
         {kanri > 0    && <Row label="管理費・修繕積立金精算" value={yen(kanri)} indent />}
         <Row label="収入合計" value={yen(income)} bold borderTop />
 
         {/* 経費 — ✅譲渡費用OK */}
-        <SectionHead label="■ 経費（支出）　✅ 譲渡費用 or 取得費（税額計算に算入）" color="#1d4ed8" />
+        <SectionHead label="■ 経費（支出）　✅ 譲渡費用 or 取得費（税額計算に算入）" color="#1e3a5f" />
         <Row label="仲介手数料（消費税込）" value={minus(chuko)} indent />
         <Row label="印紙代（売買契約書）" value={minus(calcInshiBaibai(price))} indent />
         {parseNum(seller.kaitai)    > 0 && <Row label="解体費用"                value={minus(parseNum(seller.kaitai))}    indent />}
@@ -75,14 +75,14 @@ function SellerPrint({ seller }) {
         {/* 旧フィールド後方互換 */}
         {parseNum(seller.otherS2) > 0 && <Row label={seller.otherS2Label || "その他"} value={minus(parseNum(seller.otherS2))} indent />}
         {parseNum(seller.otherS3) > 0 && <Row label={seller.otherS3Label || "その他"} value={minus(parseNum(seller.otherS3))} indent />}
-        <Row label="経費合計（税除く）" value={minus(expense)} bold borderTop color="#dc2626" />
+        <Row label="経費合計（税除く）" value={minus(expense)} bold borderTop color="#6b7280" />
 
         {/* 税引前 */}
-        <SectionHead label="■ 税引前手残り" color="#0369a1" />
+        <SectionHead label="■ 税引前手残り" color="#1e3a5f" />
         <Row label="税引前手残り（収入 ー 経費）" value={yen(zenZei)} bold />
 
         {/* 譲渡所得税 */}
-        <SectionHead label="■ 譲渡所得税（概算）" color="#4338ca" />
+        <SectionHead label="■ 譲渡所得税（概算）" color="#1e3a5f" />
         <Row label={seller.shotokuhi5pct ? "概算取得費（5%ルール）" : "取得費（実額）"} value={minus(Math.floor(tax.shotokuhi))} indent />
         <Row label="譲渡費用（仲介・印紙・解体・測量等）" value={minus(Math.floor(tax.jotoHiyo))} indent />
         <Row label="譲渡所得" value={yen(Math.floor(tax.jotoShotoku))} indent bold />
@@ -97,14 +97,14 @@ function SellerPrint({ seller }) {
           label={`税率（${seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減（6,000万以下 14.21%／超過分 20.315%）" : "長期 20.315%"}）`}
           value="" indent
         />
-        <Row label="譲渡所得税額（概算）" value={minus(tax.zei)} bold borderTop color="#4338ca" />
+        <Row label="譲渡所得税額（概算）" value={minus(tax.zei)} bold borderTop color="#1e3a5f" />
 
         {/* 最終サマリー */}
         <SectionHead label="■ 精算サマリー" color="#1e3a5f" />
         <Row label="収入合計"         value={yen(income)}   indent />
         <Row label="経費合計（税除く）" value={minus(expense)} indent />
         <Row label="譲渡所得税（概算）" value={minus(tax.zei)} indent />
-        <Row label="最終手残り概算" value={yen(final)} bold borderTop color={final >= 0 ? "#15803d" : "#dc2626"} />
+        <Row label="最終手残り概算" value={yen(final)} bold borderTop color={final >= 0 ? "#1e3a5f" : "#6b7280"} />
       </tbody>
     </table>
   );
@@ -128,13 +128,13 @@ function BuyerPrint({ buyer }) {
     <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 20 }}>
       <tbody>
         {/* 売買金額 */}
-        <SectionHead label="■ 売買金額" color="#15803d" />
+        <SectionHead label="■ 売買金額" color="#78716c" />
         <Row label="売買金額" value={yen(price)} indent />
         {parseNum(buyer.koteishisan) > 0 && <Row label="固定資産税・都市計画税精算" value={yen(parseNum(buyer.koteishisan))} indent />}
         {parseNum(buyer.kanriB)      > 0 && <Row label="管理費・修繕積立金精算"     value={yen(parseNum(buyer.kanriB))}      indent />}
 
         {/* 諸費用 */}
-        <SectionHead label="■ 諸費用内訳" color="#1e3a5f" />
+        <SectionHead label="■ 諸費用内訳" color="#78716c" />
         <Row label="仲介手数料（消費税込）"           value={yen(chuko)}                        indent />
         <Row label="印紙代（売買契約書）"             value={yen(calcInshiBaibai(price))}       indent />
         <Row label="印紙代（金銭消費貸借契約書）"     value={yen(calcInshiKinsho(loan))}        indent />
@@ -149,15 +149,15 @@ function BuyerPrint({ buyer }) {
         <Row label="諸費用合計（概算）" value={yen(total)} bold borderTop />
 
         {/* 総額 */}
-        <SectionHead label="■ 総額" color="#065f46" />
+        <SectionHead label="■ 総額" color="#a16a46" />
         <Row label="売買金額"         value={yen(price)}         indent />
         <Row label="諸費用合計（概算）" value={yen(total)}         indent />
-        <Row label="購入総額（概算）"  value={yen(price + total)} bold borderTop color="#065f46" />
+        <Row label="購入総額（概算）"  value={yen(price + total)} bold borderTop color="#a16a46" />
 
         {/* ローンシミュレーション */}
         {loan > 0 && loanSim && (
           <>
-            <SectionHead label="■ ローンシミュレーション（元利均等）" color="#374151" />
+            <SectionHead label="■ ローンシミュレーション（元利均等）" color="#78716c" />
             <Row label="借入予定額"   value={yen(loan)}                   indent />
             <Row label="金利（年率）" value={`${buyer.loanKinri || "—"}%`} indent />
             <Row label="返済期間"     value={`${buyer.loanKikan || "—"}年`} indent />
@@ -173,6 +173,7 @@ function BuyerPrint({ buyer }) {
 
 export default function PrintView({ tab, seller, buyer }) {
   const isSeller = tab === "seller";
+  const headColor = isSeller ? "#1e3a5f" : "#a16a46";
   const info = isSeller
     ? { title: "売主向け", name: seller.caseNameS, customer: seller.customerNameS, date: seller.dateS }
     : { title: "買主向け", name: buyer.caseNameB,  customer: buyer.customerNameB,  date: buyer.dateB };
@@ -180,8 +181,8 @@ export default function PrintView({ tab, seller, buyer }) {
   return (
     <div className="print-only" style={{ fontFamily: "'Hiragino Sans','Noto Sans JP',sans-serif", fontSize: 11, color: "#111", padding: "0 4mm" }}>
       {/* ヘッダー */}
-      <div style={{ borderBottom: "3px solid #1e3a5f", paddingBottom: 8, marginBottom: 12 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#1e3a5f" }}>
+      <div style={{ borderBottom: `3px solid ${headColor}`, paddingBottom: 8, marginBottom: 12 }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: headColor }}>
           不動産諸費用計算書（{info.title}）
         </div>
         <div style={{ display: "flex", gap: 24, marginTop: 6, fontSize: 11, color: "#374151" }}>
