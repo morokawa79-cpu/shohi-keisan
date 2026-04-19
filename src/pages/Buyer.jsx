@@ -79,8 +79,8 @@ export default function Buyer({ buyer, setB }) {
           {[["true", "🏠 居住用"], ["false", "🏢 非居住用"]].map(([val, lbl]) => (
             <label key={val} style={{ display: "flex", alignItems: "center", gap: 5, cursor: "pointer",
               padding: "4px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-              background: String(buyer.jukyoyo) === val ? "#7c4a2a" : "#fff",
-              border: String(buyer.jukyoyo) === val ? "1px solid #7c4a2a" : "1px solid #e5e7eb",
+              background: String(buyer.jukyoyo) === val ? "#a16a46" : "#fff",
+              border: String(buyer.jukyoyo) === val ? "1px solid #a16a46" : "1px solid #e5e7eb",
               color: String(buyer.jukyoyo) === val ? "#fff" : "#374151" }}>
               <input type="radio" name="jukyoyo" value={val}
                 checked={String(buyer.jukyoyo) === val}
@@ -174,7 +174,7 @@ export default function Buyer({ buyer, setB }) {
                 <label key={rate} style={{
                   display: "flex", alignItems: "center", gap: 5, cursor: "pointer",
                   padding: "3px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-                  background: (buyer.loanJimuRate || "3.3") === rate ? "#7c4a2a" : "#e5e7eb",
+                  background: (buyer.loanJimuRate || "3.3") === rate ? "#a16a46" : "#e5e7eb",
                   color: (buyer.loanJimuRate || "3.3") === rate ? "#fff" : "#374151"
                 }}>
                   <input type="radio" name="loanJimuRate" value={rate}
@@ -203,12 +203,12 @@ export default function Buyer({ buyer, setB }) {
         </Section>
 
         {/* 諸費用合計 */}
-        <div style={{ background: "#7c4a2a", borderRadius: 8, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+        <div style={{ background: "#a16a46", borderRadius: 8, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
           <div style={{ color: "#f5e6d3", fontSize: 13, fontWeight: 600 }}>諸費用合計（概算）</div>
           <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>¥{buyerTotal.toLocaleString()}</div>
         </div>
         {buyerPrice > 0 && (
-          <div style={{ background: "#5c3820", borderRadius: 8, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+          <div style={{ background: "#7c4a2a", borderRadius: 8, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "#f5e6d3" }}>購入価格＋諸費用　総額</span>
             <span style={{ fontSize: 20, fontWeight: 700, color: "#e8c87a" }}>
               ¥{(buyerPrice + buyerTotal).toLocaleString()}
@@ -224,8 +224,8 @@ export default function Buyer({ buyer, setB }) {
       </div>
 
       {/* ▼ 借入予定額 */}
-      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginTop: 14, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb", borderLeft: "3px solid #7c4a2a" }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#7c4a2a", marginBottom: 8 }}>🏦 借入予定額</div>
+      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginTop: 14, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb", borderLeft: "3px solid #a16a46" }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: "#a16a46", marginBottom: 8 }}>🏦 借入予定額</div>
         <Row label="借入予定額" value={buyer.loanAmtB} onChange={v => setB("loanAmtB", v)} />
       </div>
 
@@ -236,7 +236,7 @@ export default function Buyer({ buyer, setB }) {
           <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginTop: 14, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, borderBottom: "1px solid #e5e7eb", paddingBottom: 8 }}>
               <span style={{ fontSize: 18 }}>📊</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#7c4a2a" }}>ローンシミュレーション</span>
+              <span style={{ fontSize: 15, fontWeight: 700, color: "#a16a46" }}>ローンシミュレーション</span>
               <span style={{ fontSize: 11, color: "#9ca3af" }}>元利均等返済</span>
             </div>
 
@@ -259,8 +259,8 @@ export default function Buyer({ buyer, setB }) {
               <div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 10 }}>
                   {[
-                    ["月々返済額", `¥${loan.monthly.toLocaleString()}`, "#7c4a2a", "#faf3e8", "#f5e6d3"],
-                    ["総返済額", `¥${loan.total.toLocaleString()}`, "#5c3820", "#faf3e8", "#f5e6d3"],
+                    ["月々返済額", `¥${loan.monthly.toLocaleString()}`, "#a16a46", "#faf3e8", "#f5e6d3"],
+                    ["総返済額", `¥${loan.total.toLocaleString()}`, "#7c4a2a", "#faf3e8", "#f5e6d3"],
                     ["総利息", `¥${loan.interest.toLocaleString()}`, "#92400e", "#fffbeb", "#fde68a"],
                   ].map(([lbl, val, color, bg, bd]) => (
                     <div key={lbl} style={{ background: bg, borderRadius: 8, padding: "10px 12px", textAlign: "center", border: `1px solid ${bd}` }}>
@@ -278,7 +278,7 @@ export default function Buyer({ buyer, setB }) {
                       return (
                         <div key={label} style={{ textAlign: "center", background: "#fff", borderRadius: 6, padding: "6px 8px", border: "1px solid #e2e8f0" }}>
                           <div style={{ fontSize: 11, color: "#6b7280" }}>比率{label}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#7c4a2a" }}>¥{needed.toLocaleString()}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#a16a46" }}>¥{needed.toLocaleString()}</div>
                         </div>
                       );
                     })}

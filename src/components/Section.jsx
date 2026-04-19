@@ -2,11 +2,12 @@ export default function Section({ title, children, color = "teal" }) {
   const colors = {
     navy:  "#1e3a5f",
     teal:  "#0f766e",
-    brown: "#7c4a2a",
+    brown: "#a16a46",
+    taupe: "#78716c",
     gray:  "#6b7280",
     // 後方互換
     blue:  "#1e3a5f",
-    green: "#7c4a2a",
+    green: "#78716c",
     red:   "#6b7280",
   };
   const c = colors[color] || colors.teal;
