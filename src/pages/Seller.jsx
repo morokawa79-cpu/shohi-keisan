@@ -215,7 +215,7 @@ export default function Seller({ seller, setS }) {
                 <input type="checkbox" checked={seller.shotokuhi5pct}
                   onChange={e => setS("shotokuhi5pct", e.target.checked)}
                   style={{ width: 16, height: 16, accentColor: "#2563eb" }} />
-                概算取得費（売却価格×5%）を使用
+                概算取得費（5%ルール）を使用　※取得費が不明な場合
                 {seller.shotokuhi5pct && sellerPrice > 0 &&
                   <span style={{ color: "#2563eb", fontWeight: 600 }}>= ¥{(sellerPrice * 0.05).toLocaleString()}</span>}
               </label>
@@ -591,9 +591,9 @@ export default function Seller({ seller, setS }) {
                   </tr>
                   <tr>
                     <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
-                    <td style={tdL}>{seller.shotokuhi5pct ? "取得費（収入合計×5%）" : "取得費（実額）"}</td>
+                    <td style={tdL}>{seller.shotokuhi5pct ? "概算取得費（5%ルール）" : "取得費（実額）"}</td>
                     <td style={{ ...tdR, color: "#dc2626" }}>{yen2(Math.floor(tax.shotokuhi))}</td>
-                    <td style={tdL}>購入時の費用・リフォーム費等</td>
+                    <td style={tdL}>{seller.shotokuhi5pct ? "取得費不明時の概算控除" : "購入価格＋購入時諸費用等"}</td>
                   </tr>
                   <tr>
                     <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
