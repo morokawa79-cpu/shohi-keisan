@@ -77,7 +77,10 @@ export function calcJotoZei(f) {
   const price = parseNum(f.salePriceS);
   if (!price) return { zei: 0, breakdown: null };
 
-  const shotokuhi = f.shotokuhi5pct ? price * 0.05 : parseNum(f.shotokuhi);
+  // 固定資産税精算金・管理費精算金は売買代金の一部として譲渡収入に含める
+  const totalIncome = price + parseNum(f.koteishisanS) + parseNum(f.kanrisei);
+
+  const shotokuhi = f.shotokuhi5pct ? totalIncome * 0.05 : parseNum(f.shotokuhi);
 
   const chukoForTax = f.autoChukoS !== false ? calcChuko(price) : parseNum(f.manualChukoS);
   const jotoHiyo = chukoForTax
@@ -89,7 +92,7 @@ export function calcJotoZei(f) {
     + (f.ihinZanchiJoto !== false ? parseNum(f.ihinZanchi) : 0)
     + parseNum(f.souzokuToroku);
 
-  const jotoShotoku = price - shotokuhi - jotoHiyo;
+  const jotoShotoku = totalIncome - shotokuhi - jotoHiyo;
 
   let kojo = 0;
   if (f.kojo3000) kojo += 30000000;
@@ -112,7 +115,7 @@ export function calcJotoZei(f) {
     zei = Math.floor(kazeiShotoku * zeiritsu);
   }
 
-  return { zei, shotokuhi, jotoHiyo, jotoShotoku, kojo, kazeiShotoku, zeiritsu };
+  return { zei, totalIncome, shotokuhi, jotoHiyo, jotoShotoku, kojo, kazeiShotoku, zeiritsu };
 }
 
 export function calcSellerTotal(f) {

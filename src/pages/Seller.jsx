@@ -429,7 +429,7 @@ export default function Seller({ seller, setS }) {
                 <span>売却価格</span><span>¥{sellerPrice.toLocaleString()}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", color: "#fca5a5" }}>
-                <span>▲ 取得費{seller.shotokuhi5pct ? "（概算5%）" : ""}</span>
+                <span>▲ 取得費{seller.shotokuhi5pct ? "（収入合計×5%）" : ""}</span>
                 <span>▲¥{Math.floor(tax.shotokuhi).toLocaleString()}</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", color: "#fca5a5" }}>

@@ -83,7 +83,7 @@ function SellerPrint({ seller }) {
 
         {/* 譲渡所得税 */}
         <SectionHead label="■ 譲渡所得税（概算）" color="#4338ca" />
-        <Row label={`取得費${seller.shotokuhi5pct ? "（売却価格×5%）" : ""}`} value={minus(Math.floor(tax.shotokuhi))} indent />
+        <Row label={`取得費${seller.shotokuhi5pct ? "（収入合計×5%）" : ""}`} value={minus(Math.floor(tax.shotokuhi))} indent />
         <Row label="譲渡費用（仲介・印紙・解体・測量等）" value={minus(Math.floor(tax.jotoHiyo))} indent />
         <Row label="譲渡所得" value={yen(Math.floor(tax.jotoShotoku))} indent bold />
         {tax.kojo > 0 && (
