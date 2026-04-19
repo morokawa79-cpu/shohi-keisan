@@ -94,7 +94,7 @@ function SellerPrint({ seller }) {
         )}
         <Row label="課税譲渡所得" value={yen(Math.floor(tax.kazeiShotoku))} indent bold />
         <Row
-          label={`税率（${seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減 14.21%" : "長期 20.315%"}）`}
+          label={`税率（${seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減（6,000万以下 14.21%／超過分 20.315%）" : "長期 20.315%"}）`}
           value="" indent
         />
         <Row label="譲渡所得税額（概算）" value={minus(tax.zei)} bold borderTop color="#4338ca" />

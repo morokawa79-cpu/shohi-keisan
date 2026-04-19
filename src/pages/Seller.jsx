@@ -86,8 +86,8 @@ export default function Seller({ seller, setS }) {
         </div>
 
         <Row label="売却価格" value={seller.salePriceS} onChange={v => setS("salePriceS", v)} />
-        <Row label="固定資産税・都市計画税精算金" value={seller.koteishisanS} onChange={v => setS("koteishisanS", v)} note="買主から受取（日割り）" />
-        <Row label="管理費・修繕積立金精算" value={seller.kanrisei} onChange={v => setS("kanrisei", v)} note="買主から受取（日割り）・マンション用" />
+        <Row label="固定資産税・都市計画税精算金" value={seller.koteishisanS} onChange={v => setS("koteishisanS", v)} note="買主から受取（日割り）・譲渡収入に含まれ税額計算の対象" />
+        <Row label="管理費・修繕積立金精算" value={seller.kanrisei} onChange={v => setS("kanrisei", v)} note="買主から受取（日割り）・マンション用・譲渡収入に含まれる" />
 
         {(() => {
           const incomeTotal = sellerPrice + parseNum(seller.koteishisanS) + parseNum(seller.kanrisei);
@@ -95,7 +95,7 @@ export default function Seller({ seller, setS }) {
             <div style={{ marginTop: 10, background: "#f0fdf4", border: "1px solid #86efac", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: "#15803d" }}>収入合計</span>
               <span style={{ fontSize: 18, fontWeight: 700, color: "#15803d" }}>
-                {incomeTotal > 0 ? `¥${incomeTotal.toLocaleString()}` : "—"}
+                {incomeTotal > 0 ? `${incomeTotal.toLocaleString()}円` : "—"}
               </span>
             </div>
           );
@@ -128,14 +128,17 @@ export default function Seller({ seller, setS }) {
           <Row label="解体費用" value={seller.kaitai} onChange={v => setS("kaitai", v)} note="売却のために必要な場合" />
           <Row label="建物滅失登記費用" value={seller.metshitsu} onChange={v => setS("metshitsu", v)} note="土地家屋調査士概算" />
           <Row label="測量費用（確定測量等）" value={seller.sokuryo} onChange={v => setS("sokuryo", v)} />
-          <Row label="相続登記費用（取得費）" value={seller.souzokuToroku} onChange={v => setS("souzokuToroku", v)} note="相続で取得した物件の登記費用・取得費として算入可" />
+          <Row label="相続登記費用（取得費）" value={seller.souzokuToroku} onChange={v => setS("souzokuToroku", v)} note="譲渡費用ではなく取得費に算入・譲渡所得を直接減らす" />
           {seller.ihinZanchiJoto !== false && (
-            <div>
+            <div style={{ position: "relative" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -6 }}>
+                <button type="button"
+                  onClick={() => setS("ihinZanchiJoto", false)}
+                  style={{ fontSize: 10, color: "#1d4ed8", background: "#fff", border: "1px solid #93c5fd", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>
+                  ▼ NG欄へ移動
+                </button>
+              </div>
               <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="売買条件として必要な場合は算入可" />
-              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#1d4ed8", paddingLeft: 8, paddingBottom: 6, cursor: "pointer" }}>
-                <input type="checkbox" checked onChange={e => setS("ihinZanchiJoto", e.target.checked)} style={{ accentColor: "#1d4ed8" }} />
-                ✅ 譲渡費用として算入中　（チェックを外すとNG欄へ移動）
-              </label>
             </div>
           )}
           <LabelRow
@@ -155,12 +158,15 @@ export default function Seller({ seller, setS }) {
           <Row label="住所変更登記費用" value={seller.jushoHenko} onChange={v => setS("jushoHenko", v)} note="司法書士報酬込・概算" />
           <Row label="権利書紛失（本人確認情報）" value={seller.kenrishoPunshitsu} onChange={v => setS("kenrishoPunshitsu", v)} note="司法書士報酬概算" />
           {seller.ihinZanchiJoto === false && (
-            <div>
+            <div style={{ position: "relative" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -6 }}>
+                <button type="button"
+                  onClick={() => setS("ihinZanchiJoto", true)}
+                  style={{ fontSize: 10, color: "#1d4ed8", background: "#fff", border: "1px solid #93c5fd", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>
+                  ▲ 譲渡費用OK欄へ移動
+                </button>
+              </div>
               <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="個人的な理由での処分は譲渡費用不可" />
-              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#6b7280", paddingLeft: 8, paddingBottom: 6, cursor: "pointer" }}>
-                <input type="checkbox" checked={false} onChange={e => setS("ihinZanchiJoto", e.target.checked)} style={{ accentColor: "#1d4ed8" }} />
-                ❌ 譲渡費用に算入しない　（チェックを入れるとOK欄へ移動）
-              </label>
             </div>
           )}
           <Row label="引越し費用" value={seller.hikkoshi} onChange={v => setS("hikkoshi", v)} />
@@ -173,19 +179,11 @@ export default function Seller({ seller, setS }) {
 
         {(() => {
           const exp = calcSellerExpense(seller);
-          const incomeTotal = sellerPrice + parseNum(seller.koteishisanS) + parseNum(seller.kanrisei);
-          const zanzei = incomeTotal - exp;
           return (
-            <>
-              <div style={{ marginTop: 4, background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: "#dc2626" }}>経費小計（税除く）</span>
-                <span style={{ fontSize: 16, fontWeight: 700, color: "#dc2626" }}>▲ ¥{exp.toLocaleString()}</span>
-              </div>
-              <div style={{ marginTop: 8, background: "#f0f9ff", border: "1px solid #7dd3fc", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: "#0369a1" }}>小計（税引前・経費除く）</span>
-                <span style={{ fontSize: 16, fontWeight: 700, color: "#0369a1" }}>¥{zanzei.toLocaleString()}</span>
-              </div>
-            </>
+            <div style={{ marginTop: 4, background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#dc2626" }}>経費合計（譲渡所得税を除く）</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: "#dc2626" }}>▲ {exp.toLocaleString()}円</span>
+            </div>
           );
         })()}
       </div>
@@ -228,7 +226,7 @@ export default function Seller({ seller, setS }) {
             <div style={{ marginBottom: 12 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 6 }}>▶ 所有期間</div>
               <div style={{ display: "flex", gap: 16 }}>
-                {[["long","長期譲渡（5年超）20.315%"],["short","短期譲渡（5年以下）39.63%"]].map(([val, lbl]) => (
+                {[["long","長期譲渡（売却年1/1時点で所有5年超）20.315%"],["short","短期譲渡（売却年1/1時点で所有5年以下）39.63%"]].map(([val, lbl]) => (
                   <label key={val} style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 13 }}>
                     <input type="radio" name="taxKubun" value={val}
                       checked={seller.taxKubun === val}
@@ -483,7 +481,11 @@ export default function Seller({ seller, setS }) {
         if (hikkoshi > 0) expNGRows.push({ no: nNo++, label: "引越し費用",               value: min2(hikkoshi), note: "" });
         if (otherS   > 0) expNGRows.push({ no: nNo++, label: seller.otherSLabel || "その他", value: min2(otherS), note: "" });
 
-        const taxLabel = seller.taxKubun === "short" ? "短期 39.63%" : seller.keigenZeiritsu ? "居住用軽減 14.21%" : "長期 20.315%";
+        const taxLabel = seller.taxKubun === "short"
+          ? "短期 39.63%"
+          : seller.keigenZeiritsu
+          ? "居住用軽減（6,000万以下 14.21%／超過分 20.315%）"
+          : "長期 20.315%";
 
         const colGroup = <colgroup><col style={{ width: 28 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "30%" }} /></colgroup>;
 
@@ -492,7 +494,7 @@ export default function Seller({ seller, setS }) {
             {/* ─── 収入・経費カード ─── */}
             <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #d1d5db", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", marginBottom: 12 }}>
               <div style={{ background: "#1e3a5f", color: "#fff", padding: "8px 12px", fontSize: 13, fontWeight: 700 }}>
-                📋 諸費用精算サマリー
+                📋 精算明細表
               </div>
 
               {/* 収入の部 */}
@@ -640,7 +642,7 @@ export default function Seller({ seller, setS }) {
             {/* ─── 最終手残り（縦表） ─── */}
             <div style={{ borderRadius: 8, overflow: "hidden", border: "2px solid #1e3a5f", boxShadow: "0 2px 8px rgba(30,58,95,0.15)", marginTop: 12 }}>
               <div style={{ background: "#1e3a5f", color: "#fff", padding: "7px 12px", fontSize: 12, fontWeight: 700 }}>
-                精算まとめ
+🎯 最終サマリー
               </div>
               <table style={{ ...tbl }}>
                 <colgroup><col style={{ width: 36 }} /><col /><col style={{ width: "35%" }} /></colgroup>
