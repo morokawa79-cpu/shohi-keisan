@@ -79,10 +79,10 @@ export default function Seller({ seller, setS }) {
       </div>
 
       {/* ▼ 収入ブロック */}
-      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", border: "2px solid #bbf7d0" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, borderBottom: "2px solid #bbf7d0", paddingBottom: 8 }}>
-          <span style={{ fontSize: 18 }}>📥</span>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#15803d" }}>収　入</span>
+      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, borderBottom: "1px solid #e5e7eb", paddingBottom: 8 }}>
+          <span style={{ fontSize: 16 }}>📥</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: "#111827", letterSpacing: "0.05em" }}>収　入</span>
         </div>
 
         <Row label="売却価格" value={seller.salePriceS} onChange={v => setS("salePriceS", v)} />
@@ -92,9 +92,9 @@ export default function Seller({ seller, setS }) {
         {(() => {
           const incomeTotal = sellerPrice + parseNum(seller.koteishisanS) + parseNum(seller.kanrisei);
           return (
-            <div style={{ marginTop: 10, background: "#f0fdf4", border: "1px solid #86efac", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#15803d" }}>収入合計</span>
-              <span style={{ fontSize: 18, fontWeight: 700, color: "#15803d" }}>
+            <div style={{ marginTop: 10, background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>収入合計</span>
+              <span style={{ fontSize: 18, fontWeight: 700, color: "#4f46e5", fontVariantNumeric: "tabular-nums" }}>
                 {incomeTotal > 0 ? `${incomeTotal.toLocaleString()}円` : "—"}
               </span>
             </div>
@@ -103,16 +103,16 @@ export default function Seller({ seller, setS }) {
       </div>
 
       {/* ▼ 経費ブロック */}
-      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", border: "2px solid #fecaca" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, borderBottom: "2px solid #fecaca", paddingBottom: 8 }}>
-          <span style={{ fontSize: 18 }}>📤</span>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#dc2626" }}>経　費（支出）</span>
+      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, borderBottom: "1px solid #e5e7eb", paddingBottom: 8 }}>
+          <span style={{ fontSize: 16 }}>📤</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: "#111827", letterSpacing: "0.05em" }}>経　費（支出）</span>
         </div>
 
         {/* ── 譲渡費用OK ─────────────────────────── */}
-        <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: "10px 14px", marginBottom: 12 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#1d4ed8", marginBottom: 6 }}>
-            ✅ 譲渡費用 or 取得費（税額計算に算入・ここが多いほど税金が減る）
+        <div style={{ background: "#fafafa", borderLeft: "3px solid #4f46e5", border: "1px solid #e5e7eb", borderLeftWidth: 3, borderRadius: 6, padding: "10px 14px", marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#4f46e5", marginBottom: 6, letterSpacing: "0.02em" }}>
+            ✅ 譲渡費用 / 取得費（税額計算に算入・ここが多いほど税金が減る）
           </div>
           <ToggleRow
             label="仲介手数料（消費税込）"
@@ -134,7 +134,7 @@ export default function Seller({ seller, setS }) {
               <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -6 }}>
                 <button type="button"
                   onClick={() => setS("ihinZanchiJoto", false)}
-                  style={{ fontSize: 10, color: "#1d4ed8", background: "#fff", border: "1px solid #93c5fd", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>
+                  style={{ fontSize: 10, color: "#4f46e5", background: "#fff", border: "1px solid #c7d2fe", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>
                   ▼ NG欄へ移動
                 </button>
               </div>
@@ -150,8 +150,8 @@ export default function Seller({ seller, setS }) {
         </div>
 
         {/* ── 経費NG ──────────────────────────────── */}
-        <div style={{ background: "#f9fafb", border: "1px solid #d1d5db", borderRadius: 8, padding: "10px 14px", marginBottom: 8 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6 }}>
+        <div style={{ background: "#fafafa", borderLeft: "3px solid #9ca3af", border: "1px solid #e5e7eb", borderLeftWidth: 3, borderRadius: 6, padding: "10px 14px", marginBottom: 8 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", marginBottom: 6, letterSpacing: "0.02em" }}>
             ❌ その他経費（手残りに影響・税額計算には含まれない）
           </div>
           <Row label="抵当権抹消登記費用" value={seller.teitoSetsu} onChange={v => setS("teitoSetsu", v)} note="司法書士報酬込・概算" />
@@ -162,7 +162,7 @@ export default function Seller({ seller, setS }) {
               <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -6 }}>
                 <button type="button"
                   onClick={() => setS("ihinZanchiJoto", true)}
-                  style={{ fontSize: 10, color: "#1d4ed8", background: "#fff", border: "1px solid #93c5fd", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>
+                  style={{ fontSize: 10, color: "#4f46e5", background: "#fff", border: "1px solid #c7d2fe", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>
                   ▲ 譲渡費用OK欄へ移動
                 </button>
               </div>
@@ -180,9 +180,9 @@ export default function Seller({ seller, setS }) {
         {(() => {
           const exp = calcSellerExpense(seller);
           return (
-            <div style={{ marginTop: 4, background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: "#dc2626" }}>経費合計（譲渡所得税を除く）</span>
-              <span style={{ fontSize: 16, fontWeight: 700, color: "#dc2626" }}>▲ {exp.toLocaleString()}円</span>
+            <div style={{ marginTop: 4, background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#374151" }}>経費合計（譲渡所得税を除く）</span>
+              <span style={{ fontSize: 16, fontWeight: 700, color: "#111827", fontVariantNumeric: "tabular-nums" }}>▲ {exp.toLocaleString()}円</span>
             </div>
           );
         })()}
@@ -194,15 +194,15 @@ export default function Seller({ seller, setS }) {
           <label style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: "1px solid #e8edf2", cursor: "pointer", fontSize: 13, color: "#374151" }}>
             <input type="checkbox" checked={seller[field]}
               onChange={e => setS(field, e.target.checked)}
-              style={{ width: 16, height: 16, accentColor: "#2563eb", cursor: "pointer" }} />
+              style={{ width: 16, height: 16, accentColor: "#4f46e5", cursor: "pointer" }} />
             {label}
           </label>
         );
         return (
-          <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", border: "2px solid #e0e7ff" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, borderBottom: "2px solid #e0e7ff", paddingBottom: 8 }}>
-              <span style={{ fontSize: 18 }}>🧮</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#4338ca" }}>譲渡所得税（概算）</span>
+          <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginBottom: 12, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, borderBottom: "1px solid #e5e7eb", paddingBottom: 8 }}>
+              <span style={{ fontSize: 16 }}>🧮</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "#111827", letterSpacing: "0.05em" }}>譲渡所得税（概算）</span>
               <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: 4 }}>※税理士にご確認ください</span>
             </div>
 
@@ -212,10 +212,10 @@ export default function Seller({ seller, setS }) {
               <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, cursor: "pointer", fontSize: 13 }}>
                 <input type="checkbox" checked={seller.shotokuhi5pct}
                   onChange={e => setS("shotokuhi5pct", e.target.checked)}
-                  style={{ width: 16, height: 16, accentColor: "#2563eb" }} />
+                  style={{ width: 16, height: 16, accentColor: "#4f46e5" }} />
                 概算取得費（5%ルール）を使用　※取得費が不明な場合
                 {seller.shotokuhi5pct && sellerPrice > 0 &&
-                  <span style={{ color: "#2563eb", fontWeight: 600 }}>= ¥{(sellerPrice * 0.05).toLocaleString()}</span>}
+                  <span style={{ color: "#4f46e5", fontWeight: 600 }}>= ¥{(sellerPrice * 0.05).toLocaleString()}</span>}
               </label>
               {!seller.shotokuhi5pct && (
                 <Row label="実際の取得費" value={seller.shotokuhi} onChange={v => setS("shotokuhi", v)} note="購入価格＋購入時諸費用" />
@@ -231,7 +231,7 @@ export default function Seller({ seller, setS }) {
                     <input type="radio" name="taxKubun" value={val}
                       checked={seller.taxKubun === val}
                       onChange={() => setS("taxKubun", val)}
-                      style={{ accentColor: "#2563eb" }} />
+                      style={{ accentColor: "#4f46e5" }} />
                     {lbl}
                   </label>
                 ))}
@@ -247,7 +247,7 @@ export default function Seller({ seller, setS }) {
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: 13, color: "#374151", paddingTop: 7 }}>
                   <input type="checkbox" checked={seller.kojo3000}
                     onChange={e => setS("kojo3000", e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: "#2563eb", marginTop: 2 }} />
+                    style={{ width: 16, height: 16, accentColor: "#4f46e5", marginTop: 2 }} />
                   <span>3,000万円特別控除（マイホーム売却）<br/>
                     <span style={{ fontSize: 11, color: "#9ca3af" }}>※居住用・親族売却不可・前年前々年に未使用</span>
                   </span>
@@ -293,7 +293,7 @@ export default function Seller({ seller, setS }) {
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: 13, color: "#374151", paddingTop: 7 }}>
                   <input type="checkbox" checked={seller.kojo3000Sozoku}
                     onChange={e => setS("kojo3000Sozoku", e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: "#2563eb", marginTop: 2 }} />
+                    style={{ width: 16, height: 16, accentColor: "#4f46e5", marginTop: 2 }} />
                   <span>3,000万円特別控除（相続空き家）<br/>
                     <span style={{ fontSize: 11, color: "#9ca3af" }}>※旧耐震S56.5.31以前・戸建のみ・1億円以下・相続人3人以上は2,000万・R9年末まで</span>
                   </span>
@@ -345,7 +345,7 @@ export default function Seller({ seller, setS }) {
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: 13, color: "#374151", paddingTop: 7 }}>
                   <input type="checkbox" checked={seller.teiMiriyo}
                     onChange={e => setS("teiMiriyo", e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: "#2563eb", marginTop: 2 }} />
+                    style={{ width: 16, height: 16, accentColor: "#4f46e5", marginTop: 2 }} />
                   <span>低未利用地の特例（100万円控除）<br/>
                     <span style={{ fontSize: 11, color: "#9ca3af" }}>※長期譲渡のみ・500万円以下（一定の場合800万円以下）・都市計画区域内・R7年末まで</span>
                   </span>
@@ -375,7 +375,7 @@ export default function Seller({ seller, setS }) {
                 <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", fontSize: 13, color: "#374151" }}>
                   <input type="checkbox" checked={seller.keigenZeiritsu}
                     onChange={e => setS("keigenZeiritsu", e.target.checked)}
-                    style={{ width: 16, height: 16, accentColor: "#2563eb", marginTop: 2 }} />
+                    style={{ width: 16, height: 16, accentColor: "#4f46e5", marginTop: 2 }} />
                   <span>居住用財産の軽減税率（14.21%・6,000万以下部分）<br/>
                     <span style={{ fontSize: 11, color: "#9ca3af" }}>※所有10年超・居住用のみ・3,000万控除と併用可・相続人が居住していない場合は適用外</span>
                   </span>
@@ -437,20 +437,20 @@ export default function Seller({ seller, setS }) {
         const yen2 = n => n > 0 ? `${Math.round(n).toLocaleString()}円` : "";
         const min2 = n => n > 0 ? `${Math.round(n).toLocaleString()}円` : "";
 
-        // テーブルスタイル（入力欄と色統一）
+        // テーブルスタイル（モノクロ×インディゴ）
         const tbl  = { width: "100%", borderCollapse: "collapse", fontSize: 12, tableLayout: "fixed" };
-        const tdL  = { padding: "4px 8px", border: "1px solid #d1d5db", verticalAlign: "middle" };
-        const tdR  = { padding: "4px 8px", border: "1px solid #d1d5db", textAlign: "right", verticalAlign: "middle", fontVariantNumeric: "tabular-nums" };
-        const subT = { background: "#f3f4f6", fontWeight: 700 };
-        const noTd = { padding: "4px 6px", border: "1px solid #d1d5db", textAlign: "center", color: "#6b7280", width: 28 };
-        // セクション別ヘッダー（入力欄に合わせた淡色）
-        const secIncome = { background: "#dcfce7", color: "#15803d", padding: "5px 10px", border: "1px solid #86efac", fontWeight: 700, fontSize: 11 };
-        const thIncome  = { background: "#f0fdf4", padding: "5px 8px", border: "1px solid #86efac", fontWeight: 700, fontSize: 11, textAlign: "center", color: "#15803d" };
-        const secOK     = { background: "#dbeafe", color: "#1d4ed8", padding: "5px 10px", border: "1px solid #93c5fd", fontWeight: 700, fontSize: 11 };
-        const thOK      = { background: "#eff6ff", padding: "5px 8px", border: "1px solid #93c5fd", fontWeight: 700, fontSize: 11, textAlign: "center", color: "#1d4ed8" };
-        const secNG     = { background: "#f3f4f6", color: "#374151", padding: "5px 10px", border: "1px solid #d1d5db", fontWeight: 700, fontSize: 11 };
-        const secTax    = { background: "#ede9fe", color: "#4338ca", padding: "5px 10px", border: "1px solid #c4b5fd", fontWeight: 700, fontSize: 11 };
-        const thTax     = { background: "#f5f3ff", padding: "5px 8px", border: "1px solid #c4b5fd", fontWeight: 700, fontSize: 11, textAlign: "center", color: "#4338ca" };
+        const tdL  = { padding: "5px 8px", border: "1px solid #e5e7eb", verticalAlign: "middle", color: "#111827" };
+        const tdR  = { padding: "5px 8px", border: "1px solid #e5e7eb", textAlign: "right", verticalAlign: "middle", fontVariantNumeric: "tabular-nums", color: "#111827" };
+        const subT = { background: "#f9fafb", fontWeight: 700 };
+        const noTd = { padding: "5px 6px", border: "1px solid #e5e7eb", textAlign: "center", color: "#9ca3af", width: 28 };
+        // セクション別ヘッダー（すべて同じトーンに統一）
+        const secIncome = { background: "#111827", color: "#fff", padding: "6px 10px", border: "1px solid #111827", fontWeight: 600, fontSize: 11, letterSpacing: "0.05em" };
+        const thIncome  = { background: "#f9fafb", padding: "5px 8px", border: "1px solid #e5e7eb", fontWeight: 600, fontSize: 11, textAlign: "center", color: "#6b7280" };
+        const secOK     = { background: "#4f46e5", color: "#fff", padding: "6px 10px", border: "1px solid #4f46e5", fontWeight: 600, fontSize: 11, letterSpacing: "0.05em" };
+        const thOK      = { background: "#f9fafb", padding: "5px 8px", border: "1px solid #e5e7eb", fontWeight: 600, fontSize: 11, textAlign: "center", color: "#6b7280" };
+        const secNG     = { background: "#6b7280", color: "#fff", padding: "6px 10px", border: "1px solid #6b7280", fontWeight: 600, fontSize: 11, letterSpacing: "0.05em" };
+        const secTax    = { background: "#111827", color: "#fff", padding: "6px 10px", border: "1px solid #111827", fontWeight: 600, fontSize: 11, letterSpacing: "0.05em" };
+        const thTax     = { background: "#f9fafb", padding: "5px 8px", border: "1px solid #e5e7eb", fontWeight: 600, fontSize: 11, textAlign: "center", color: "#6b7280" };
 
         // 収入行
         let incomeRows = [];
@@ -492,8 +492,8 @@ export default function Seller({ seller, setS }) {
         return (
           <div>
             {/* ─── 収入・経費カード ─── */}
-            <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #d1d5db", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", marginBottom: 12 }}>
-              <div style={{ background: "#1e3a5f", color: "#fff", padding: "8px 12px", fontSize: 13, fontWeight: 700 }}>
+            <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", marginBottom: 12, background: "#fff" }}>
+              <div style={{ background: "#fff", color: "#111827", padding: "10px 14px", fontSize: 13, fontWeight: 700, borderBottom: "1px solid #e5e7eb", letterSpacing: "0.05em" }}>
                 📋 精算明細表
               </div>
 
@@ -510,11 +510,11 @@ export default function Seller({ seller, setS }) {
                   {incomeRows.map(r => (
                     <tr key={r.no}><td style={noTd}>{r.no}</td><td style={tdL}>{r.label}</td><td style={tdR}>{r.value}</td><td style={tdL}>{r.note}</td></tr>
                   ))}
-                  <tr style={{ background: "#f0fdf4" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#15803d", fontSize: 14 }}>①</td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#15803d", background: "#f0fdf4" }}>収入合計</td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#15803d", background: "#f0fdf4" }}>{yen2(incomeTotal)}</td>
-                    <td style={{ ...tdL, background: "#f0fdf4" }}></td>
+                  <tr style={{ background: "#f9fafb" }}>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#4f46e5", fontSize: 14, background: "#f9fafb" }}>①</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#111827", background: "#f9fafb" }}>収入合計</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#4f46e5", background: "#f9fafb" }}>{yen2(incomeTotal)}</td>
+                    <td style={{ ...tdL, background: "#f9fafb" }}></td>
                   </tr>
                 </tbody>
               </table>
@@ -522,7 +522,7 @@ export default function Seller({ seller, setS }) {
               {/* 支出の部（OK） */}
               <table style={tbl}>{colGroup}
                 <thead>
-                  <tr><td colSpan={4} style={secOK}>支出の部　✅ 譲渡費用 or 取得費（税額計算に算入）</td></tr>
+                  <tr><td colSpan={4} style={secOK}>支出の部　✅ 譲渡費用 / 取得費（税額計算に算入）</td></tr>
                   <tr>
                     <th style={thOK}>No.</th><th style={thOK}>支出名目</th>
                     <th style={{ ...thOK, textAlign: "right" }}>金　額</th><th style={thOK}>備　考</th>
@@ -552,27 +552,27 @@ export default function Seller({ seller, setS }) {
               {/* 支出小計・税引前 */}
               <table style={tbl}>{colGroup}
                 <tbody>
-                  <tr style={{ background: "#fef2f2" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 14, borderTop: "2px solid #9ca3af" }}>②</td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#dc2626", background: "#fef2f2", borderTop: "2px solid #9ca3af" }}>経費合計（税除く）</td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#dc2626", background: "#fef2f2", borderTop: "2px solid #9ca3af" }}>{min2(expense)}</td>
-                    <td style={{ ...tdL, background: "#fef2f2", borderTop: "2px solid #9ca3af" }}></td>
+                  <tr style={{ background: "#f9fafb" }}>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#6b7280", fontSize: 14, borderTop: "2px solid #d1d5db", background: "#f9fafb" }}>②</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#111827", background: "#f9fafb", borderTop: "2px solid #d1d5db" }}>経費合計（譲渡所得税を除く）</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#111827", background: "#f9fafb", borderTop: "2px solid #d1d5db" }}>▲{min2(expense)}</td>
+                    <td style={{ ...tdL, background: "#f9fafb", borderTop: "2px solid #d1d5db" }}></td>
                   </tr>
-                  <tr style={{ background: "#e0f2fe" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#0369a1", fontSize: 13, background: "#e0f2fe" }}>＝</td>
-                    <td style={{ ...tdL, fontWeight: 700, color: "#0369a1", background: "#e0f2fe" }}>
+                  <tr style={{ background: "#eef2ff" }}>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#4f46e5", fontSize: 13, background: "#eef2ff" }}>＝</td>
+                    <td style={{ ...tdL, fontWeight: 700, color: "#111827", background: "#eef2ff" }}>
                       税引前手残り
-                      <span style={{ fontSize: 11, color: "#0284c7", marginLeft: 6, fontWeight: 400 }}>①－②</span>
+                      <span style={{ fontSize: 11, color: "#6b7280", marginLeft: 6, fontWeight: 400 }}>①－②</span>
                     </td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#0369a1", background: "#e0f2fe", fontSize: 14 }}>{yen2(incomeTotal - expense)}</td>
-                    <td style={{ ...tdL, background: "#e0f2fe" }}></td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#4f46e5", background: "#eef2ff", fontSize: 14 }}>{yen2(incomeTotal - expense)}</td>
+                    <td style={{ ...tdL, background: "#eef2ff" }}></td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             {/* ─── 譲渡所得税カード（1行分離） ─── */}
-            <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #c4b5fd", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+            <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
               <table style={tbl}>
                 <colgroup><col style={{ width: 36 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "28%" }} /></colgroup>
                 <thead>
@@ -589,86 +589,86 @@ export default function Seller({ seller, setS }) {
                     <td style={noTd}></td>
                     <td style={tdL}>収入合計</td>
                     <td style={tdR}>{yen2(tax.totalIncome || incomeTotal)}</td>
-                    <td style={tdL}>売却価格＋精算金</td>
+                    <td style={{ ...tdL, color: "#6b7280" }}>売却価格＋精算金</td>
                   </tr>
                   <tr>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#6b7280", fontSize: 15 }}>ー</td>
                     <td style={tdL}>{seller.shotokuhi5pct ? "概算取得費（5%ルール）" : "取得費（実額）"}</td>
-                    <td style={{ ...tdR, color: "#dc2626" }}>{yen2(Math.floor(tax.shotokuhi))}</td>
-                    <td style={tdL}>{seller.shotokuhi5pct ? "取得費不明時の概算控除" : "購入価格＋購入時諸費用等"}</td>
+                    <td style={{ ...tdR, color: "#111827" }}>▲{yen2(Math.floor(tax.shotokuhi))}</td>
+                    <td style={{ ...tdL, color: "#6b7280" }}>{seller.shotokuhi5pct ? "取得費不明時の概算控除" : "購入価格＋購入時諸費用等"}</td>
                   </tr>
                   <tr>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#6b7280", fontSize: 15 }}>ー</td>
                     <td style={tdL}>譲渡費用合計</td>
-                    <td style={{ ...tdR, color: "#dc2626" }}>{yen2(Math.floor(tax.jotoHiyo))}</td>
-                    <td style={tdL}>仲介・印紙・解体・測量等</td>
+                    <td style={{ ...tdR, color: "#111827" }}>▲{yen2(Math.floor(tax.jotoHiyo))}</td>
+                    <td style={{ ...tdL, color: "#6b7280" }}>仲介・印紙・解体・測量等</td>
                   </tr>
-                  <tr style={{ background: "#f5f3ff" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>＝</td>
-                    <td style={{ ...tdL, fontWeight: 700, color: "#4338ca" }}>譲渡所得</td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#4338ca" }}>{yen2(Math.floor(tax.jotoShotoku))}</td>
-                    <td style={tdL}></td>
+                  <tr style={{ background: "#f9fafb" }}>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#4f46e5", fontSize: 15, background: "#f9fafb" }}>＝</td>
+                    <td style={{ ...tdL, fontWeight: 700, color: "#111827", background: "#f9fafb" }}>譲渡所得</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#4f46e5", background: "#f9fafb" }}>{yen2(Math.floor(tax.jotoShotoku))}</td>
+                    <td style={{ ...tdL, background: "#f9fafb" }}></td>
                   </tr>
                   {tax.kojo > 0 && <>
                     <tr>
-                      <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
+                      <td style={{ ...noTd, fontWeight: 700, color: "#6b7280", fontSize: 15 }}>ー</td>
                       <td style={tdL}>特別控除（{[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）</td>
-                      <td style={{ ...tdR, color: "#dc2626" }}>{yen2(tax.kojo)}</td>
-                      <td style={tdL}>適用要件を税理士に確認</td>
+                      <td style={{ ...tdR, color: "#111827" }}>▲{yen2(tax.kojo)}</td>
+                      <td style={{ ...tdL, color: "#6b7280" }}>適用要件を税理士に確認</td>
                     </tr>
-                    <tr style={{ background: "#f5f3ff" }}>
-                      <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>＝</td>
-                      <td style={{ ...tdL, fontWeight: 700, color: "#4338ca" }}>課税譲渡所得</td>
-                      <td style={{ ...tdR, fontWeight: 700, color: "#4338ca" }}>{yen2(Math.floor(tax.kazeiShotoku))}</td>
-                      <td style={tdL}></td>
+                    <tr style={{ background: "#f9fafb" }}>
+                      <td style={{ ...noTd, fontWeight: 700, color: "#4f46e5", fontSize: 15, background: "#f9fafb" }}>＝</td>
+                      <td style={{ ...tdL, fontWeight: 700, color: "#111827", background: "#f9fafb" }}>課税譲渡所得</td>
+                      <td style={{ ...tdR, fontWeight: 700, color: "#4f46e5", background: "#f9fafb" }}>{yen2(Math.floor(tax.kazeiShotoku))}</td>
+                      <td style={{ ...tdL, background: "#f9fafb" }}></td>
                     </tr>
                   </>}
                   <tr>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>×</td>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#6b7280", fontSize: 15 }}>×</td>
                     <td style={tdL}>税率</td>
                     <td style={tdR}>{taxLabel}</td>
                     <td style={tdL}></td>
                   </tr>
-                  <tr style={{ background: "#ede9fe" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>③</td>
-                    <td style={{ ...tdL, fontWeight: 700, color: "#4338ca" }}>譲渡所得税額（概算）</td>
-                    <td style={{ ...tdR, fontWeight: 700, color: "#4338ca" }}>{yen2(tax.zei)}</td>
-                    <td style={tdL}></td>
+                  <tr style={{ background: "#eef2ff" }}>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#4f46e5", fontSize: 15, background: "#eef2ff" }}>③</td>
+                    <td style={{ ...tdL, fontWeight: 700, color: "#111827", background: "#eef2ff" }}>譲渡所得税額（概算）</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#4f46e5", background: "#eef2ff" }}>{yen2(tax.zei)}</td>
+                    <td style={{ ...tdL, background: "#eef2ff" }}></td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             {/* ─── 最終手残り（縦表） ─── */}
-            <div style={{ borderRadius: 8, overflow: "hidden", border: "2px solid #1e3a5f", boxShadow: "0 2px 8px rgba(30,58,95,0.15)", marginTop: 12 }}>
-              <div style={{ background: "#1e3a5f", color: "#fff", padding: "7px 12px", fontSize: 12, fontWeight: 700 }}>
-🎯 最終サマリー
+            <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #111827", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", marginTop: 12, background: "#fff" }}>
+              <div style={{ background: "#111827", color: "#fff", padding: "10px 14px", fontSize: 13, fontWeight: 700, letterSpacing: "0.05em" }}>
+                🎯 最終サマリー
               </div>
               <table style={{ ...tbl }}>
                 <colgroup><col style={{ width: 36 }} /><col /><col style={{ width: "35%" }} /></colgroup>
                 <tbody>
-                  <tr style={{ background: "#f0fdf4" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#15803d", fontSize: 15 }}>①</td>
-                    <td style={{ ...tdL, color: "#15803d", fontWeight: 600 }}>収入合計</td>
-                    <td style={{ ...tdR, color: "#15803d", fontWeight: 700 }}>{yen2(incomeTotal)}</td>
+                  <tr>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#9ca3af", fontSize: 15 }}>①</td>
+                    <td style={{ ...tdL, color: "#374151", fontWeight: 500 }}>収入合計</td>
+                    <td style={{ ...tdR, color: "#111827", fontWeight: 600 }}>{yen2(incomeTotal)}</td>
                   </tr>
-                  <tr style={{ background: "#fef2f2" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>②</td>
-                    <td style={{ ...tdL, color: "#dc2626", fontWeight: 600 }}>経費合計（税除く）</td>
-                    <td style={{ ...tdR, color: "#dc2626", fontWeight: 700 }}>▲{min2(expense)}</td>
+                  <tr>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#9ca3af", fontSize: 15 }}>②</td>
+                    <td style={{ ...tdL, color: "#374151", fontWeight: 500 }}>経費合計（譲渡所得税を除く）</td>
+                    <td style={{ ...tdR, color: "#111827", fontWeight: 600 }}>▲{min2(expense)}</td>
                   </tr>
-                  <tr style={{ background: "#f5f3ff" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>③</td>
-                    <td style={{ ...tdL, color: "#4338ca", fontWeight: 600 }}>譲渡所得税（概算）</td>
-                    <td style={{ ...tdR, color: "#4338ca", fontWeight: 700 }}>▲{min2(tax.zei)}</td>
+                  <tr>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#9ca3af", fontSize: 15 }}>③</td>
+                    <td style={{ ...tdL, color: "#374151", fontWeight: 500 }}>譲渡所得税（概算）</td>
+                    <td style={{ ...tdR, color: "#111827", fontWeight: 600 }}>▲{min2(tax.zei)}</td>
                   </tr>
-                  <tr style={{ background: "#1e3a5f" }}>
-                    <td style={{ ...noTd, fontWeight: 800, color: "#fbbf24", fontSize: 16, background: "#1e3a5f", border: "1px solid #374151" }}>＝</td>
-                    <td style={{ ...tdL, background: "#1e3a5f", color: "#fff", fontWeight: 700, fontSize: 13, border: "1px solid #374151" }}>
+                  <tr style={{ background: "#111827" }}>
+                    <td style={{ ...noTd, fontWeight: 700, color: "#a5b4fc", fontSize: 16, background: "#111827", border: "1px solid #1f2937" }}>＝</td>
+                    <td style={{ ...tdL, background: "#111827", color: "#fff", fontWeight: 700, fontSize: 13, border: "1px solid #1f2937" }}>
                       最終手残り概算
-                      <span style={{ fontSize: 11, color: "#93c5fd", marginLeft: 8, fontWeight: 400 }}>①－②－③</span>
+                      <span style={{ fontSize: 11, color: "#9ca3af", marginLeft: 8, fontWeight: 400 }}>①－②－③</span>
                     </td>
-                    <td style={{ ...tdR, background: "#1e3a5f", color: "#fbbf24", fontWeight: 800, fontSize: 18, border: "1px solid #374151" }}>{yen2(final)}</td>
+                    <td style={{ ...tdR, background: "#111827", color: "#a5b4fc", fontWeight: 700, fontSize: 18, border: "1px solid #1f2937" }}>{yen2(final)}</td>
                   </tr>
                 </tbody>
               </table>
