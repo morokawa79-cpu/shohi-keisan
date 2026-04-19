@@ -571,83 +571,70 @@ export default function Seller({ seller, setS }) {
 
             {/* ─── 譲渡所得税カード（1行分離） ─── */}
             <div style={{ borderRadius: 8, overflow: "hidden", border: "1px solid #c4b5fd", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-              {/* ヘッダー */}
-              <div style={secTax}>🧮 譲渡所得税の計算（概算）　※必ず税理士にご確認ください</div>
-
-              {/* ステップ形式 */}
-              {(() => {
-                const rowBase = { display: "flex", alignItems: "center", padding: "7px 14px", borderBottom: "1px solid #e5e7eb", fontSize: 13, gap: 10 };
-                const sym = (s, c) => <span style={{ width: 28, textAlign: "center", fontWeight: 800, fontSize: 16, color: c, flexShrink: 0 }}>{s}</span>;
-                const label = (text, sub) => (
-                  <span style={{ flex: 1, color: "#374151" }}>
-                    {text}
-                    {sub && <span style={{ fontSize: 11, color: "#6b7280", marginLeft: 6 }}>{sub}</span>}
-                  </span>
-                );
-                const amt = (n, c) => <span style={{ fontVariantNumeric: "tabular-nums", fontWeight: 600, color: c || "#111", minWidth: 130, textAlign: "right" }}>{n}</span>;
-                const divider = <div style={{ height: 2, background: "#c4b5fd", margin: "2px 0" }} />;
-                const resultRow = (text, value, color) => (
-                  <div style={{ ...rowBase, background: "#f5f3ff", fontWeight: 700 }}>
-                    {sym("＝", color || "#4338ca")}
-                    {label(text)}
-                    {amt(value, color || "#4338ca")}
-                  </div>
-                );
-
-                return (
-                  <div>
-                    {/* 収入合計 */}
-                    <div style={{ ...rowBase, background: "#fafafa" }}>
-                      {sym("", "")}
-                      {label("収入合計", "（売却価格＋固定資産税精算金等）")}
-                      {amt(yen2(tax.totalIncome || incomeTotal), "#374151")}
-                    </div>
-
-                    {/* ー 取得費 */}
-                    <div style={{ ...rowBase }}>
-                      {sym("ー", "#dc2626")}
-                      {label(seller.shotokuhi5pct ? "取得費（収入合計×5%）" : "取得費（実額）", "購入時の費用・リフォーム費等")}
-                      {amt(yen2(Math.floor(tax.shotokuhi)), "#dc2626")}
-                    </div>
-
-                    {/* ー 譲渡費用 */}
-                    <div style={{ ...rowBase }}>
-                      {sym("ー", "#dc2626")}
-                      {label("譲渡費用合計", "仲介手数料・印紙・解体・測量等")}
-                      {amt(yen2(Math.floor(tax.jotoHiyo)), "#dc2626")}
-                    </div>
-
-                    {divider}
-                    {resultRow("譲渡所得", yen2(Math.floor(tax.jotoShotoku)))}
-
-                    {/* 特別控除 */}
-                    {tax.kojo > 0 && <>
-                      <div style={{ ...rowBase }}>
-                        {sym("ー", "#dc2626")}
-                        {label(`特別控除（${[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）`, "適用要件を税理士に確認")}
-                        {amt(yen2(tax.kojo), "#dc2626")}
-                      </div>
-                      {divider}
-                      {resultRow("課税譲渡所得", yen2(Math.floor(tax.kazeiShotoku)))}
-                    </>}
-
-                    {/* 税率 */}
-                    <div style={{ ...rowBase, background: "#fafafa" }}>
-                      {sym("×", "#4338ca")}
-                      {label("税率")}
-                      {amt(taxLabel, "#4338ca")}
-                    </div>
-
-                    {divider}
-                    {/* ③ 譲渡所得税額 */}
-                    <div style={{ ...rowBase, background: "#ede9fe", fontWeight: 700 }}>
-                      {sym("③", "#4338ca")}
-                      {label("譲渡所得税額（概算）")}
-                      {amt(yen2(tax.zei), "#4338ca")}
-                    </div>
-                  </div>
-                );
-              })()}
+              <table style={tbl}>
+                <colgroup><col style={{ width: 36 }} /><col /><col style={{ width: "28%" }} /><col style={{ width: "28%" }} /></colgroup>
+                <thead>
+                  <tr><td colSpan={4} style={secTax}>🧮 譲渡所得税の計算（概算）　※必ず税理士にご確認ください</td></tr>
+                  <tr>
+                    <th style={thTax}>記号</th>
+                    <th style={thTax}>項　目</th>
+                    <th style={{ ...thTax, textAlign: "right" }}>金　額</th>
+                    <th style={thTax}>備　考</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={noTd}></td>
+                    <td style={tdL}>収入合計</td>
+                    <td style={tdR}>{yen2(tax.totalIncome || incomeTotal)}</td>
+                    <td style={tdL}>売却価格＋精算金</td>
+                  </tr>
+                  <tr>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
+                    <td style={tdL}>{seller.shotokuhi5pct ? "取得費（収入合計×5%）" : "取得費（実額）"}</td>
+                    <td style={{ ...tdR, color: "#dc2626" }}>{yen2(Math.floor(tax.shotokuhi))}</td>
+                    <td style={tdL}>購入時の費用・リフォーム費等</td>
+                  </tr>
+                  <tr>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
+                    <td style={tdL}>譲渡費用合計</td>
+                    <td style={{ ...tdR, color: "#dc2626" }}>{yen2(Math.floor(tax.jotoHiyo))}</td>
+                    <td style={tdL}>仲介・印紙・解体・測量等</td>
+                  </tr>
+                  <tr style={{ background: "#f5f3ff" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>＝</td>
+                    <td style={{ ...tdL, fontWeight: 700, color: "#4338ca" }}>譲渡所得</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#4338ca" }}>{yen2(Math.floor(tax.jotoShotoku))}</td>
+                    <td style={tdL}></td>
+                  </tr>
+                  {tax.kojo > 0 && <>
+                    <tr>
+                      <td style={{ ...noTd, fontWeight: 800, color: "#dc2626", fontSize: 15 }}>ー</td>
+                      <td style={tdL}>特別控除（{[seller.kojo3000 && "3,000万", seller.kojo3000Sozoku && "相続3,000万", seller.teiMiriyo && "低未利用100万"].filter(Boolean).join("＋")}）</td>
+                      <td style={{ ...tdR, color: "#dc2626" }}>{yen2(tax.kojo)}</td>
+                      <td style={tdL}>適用要件を税理士に確認</td>
+                    </tr>
+                    <tr style={{ background: "#f5f3ff" }}>
+                      <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>＝</td>
+                      <td style={{ ...tdL, fontWeight: 700, color: "#4338ca" }}>課税譲渡所得</td>
+                      <td style={{ ...tdR, fontWeight: 700, color: "#4338ca" }}>{yen2(Math.floor(tax.kazeiShotoku))}</td>
+                      <td style={tdL}></td>
+                    </tr>
+                  </>}
+                  <tr>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>×</td>
+                    <td style={tdL}>税率</td>
+                    <td style={tdR}>{taxLabel}</td>
+                    <td style={tdL}></td>
+                  </tr>
+                  <tr style={{ background: "#ede9fe" }}>
+                    <td style={{ ...noTd, fontWeight: 800, color: "#4338ca", fontSize: 15 }}>③</td>
+                    <td style={{ ...tdL, fontWeight: 700, color: "#4338ca" }}>譲渡所得税額（概算）</td>
+                    <td style={{ ...tdR, fontWeight: 700, color: "#4338ca" }}>{yen2(tax.zei)}</td>
+                    <td style={tdL}></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             {/* ─── 最終手残り（縦表） ─── */}
