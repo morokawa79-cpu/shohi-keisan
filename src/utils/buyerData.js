@@ -14,7 +14,7 @@ export function createLoanPlan(index, overrides = {}) {
     name: `プラン${planNumber}`,
     lenderName: "",
     amount: "",
-    annualRate: index === 0 ? "1.2" : "",
+    annualRate: index === 0 ? "3" : "",
     years: "35",
     loanFeeMode: "auto",
     loanFeeRate: index === 0 ? "3.3" : "2.2",
@@ -76,7 +76,7 @@ export function createInitialBuyer(today = new Date().toISOString().slice(0, 10)
 
     // 旧形式との相互運用用。新しい画面・計算では loanPlans / otherCosts を正とする。
     loanAmtB: "",
-    loanKinri: "1.2",
+    loanKinri: "3",
     loanKikan: "35",
     autoLoanJimu: true,
     loanJimuRate: "3.3",

@@ -1,7 +1,7 @@
 import Row from "../components/Row";
 import ToggleRow from "../components/ToggleRow";
-import LabelRow from "../components/LabelRow";
 import Section from "../components/Section";
+import OtherCostsEditor from "../components/OtherCostsEditor";
 import {
   parseNum,
   calcChuko,
@@ -9,47 +9,6 @@ import {
   calcSellerExpense,
   calcJotoZei,
 } from "../utils/calc";
-
-export const initSeller = {
-  caseNameS: "",
-  customerNameS: "",
-  dateS: new Date().toISOString().slice(0, 10),
-  salePriceS: "",
-  koteishisanS: "",
-  kanrisei: "",
-  autoChukoS: true,
-  manualChukoS: "",
-  // ── 譲渡費用OK（税額計算に算入）
-  kaitai: "",
-  metshitsu: "50000",
-  sokuryo: "",
-  otherJoto: "",
-  otherJotoLabel: "その他（譲渡費用算入可）",
-  // ── 経費NG（手残りに影響・税額には含まれない）
-  teitoSetsu: "",
-  jushoHenko: "",
-  kenrishoPunshitsu: "",
-  souzokuToroku: "",
-  ihinZanchi: "",
-  ihinZanchiJoto: false,  // false=デフォルトNG（買主要求など特殊事情の場合のみOKに）
-  hikkoshi: "",
-  otherS: "",
-  otherSLabel: "その他",
-  // 旧フィールド（後方互換）
-  otherS2: "", otherS2Label: "その他",
-  otherS3: "", otherS3Label: "その他",
-  nebiki: "",
-  // ── 譲渡所得税
-  taxKubun: "long",
-  shotokuhi5pct: true,
-  shotokuhi: "",
-  kojo3000: false,
-  kojoDate: "",
-  kojo3000Sozoku: false,
-  sozokuDate: "",
-  teiMiriyo: false,
-  keigenZeiritsu: false,
-};
 
 export default function Seller({ seller, setS }) {
   const sellerPrice = parseNum(seller.salePriceS);
@@ -141,11 +100,13 @@ export default function Seller({ seller, setS }) {
               <Row label="遺品整理・残置物撤去費用" value={seller.ihinZanchi} onChange={v => setS("ihinZanchi", v)} note="売買条件として必要な場合は算入可" />
             </div>
           )}
-          <LabelRow
-            label={seller.otherJotoLabel}
-            value={seller.otherJoto}
-            onChange={(f, v) => f === "label" ? setS("otherJotoLabel", v) : setS("otherJoto", v)}
-            placeholder="その他（譲渡費用算入可）"
+          <OtherCostsEditor
+            otherCosts={seller.otherJotoCosts}
+            onChange={(otherJotoCosts) => setS("otherJotoCosts", otherJotoCosts)}
+            idPrefix="otherJoto"
+            defaultLabel="その他（譲渡費用算入可）"
+            addButtonLabel="譲渡費用のその他を追加"
+            emptyLabel="追加の譲渡費用はありません。"
           />
         </div>
 
@@ -170,10 +131,13 @@ export default function Seller({ seller, setS }) {
             </div>
           )}
           <Row label="引越し費用" value={seller.hikkoshi} onChange={v => setS("hikkoshi", v)} />
-          <LabelRow
-            label={seller.otherSLabel}
-            value={seller.otherS}
-            onChange={(f, v) => f === "label" ? setS("otherSLabel", v) : setS("otherS", v)}
+          <OtherCostsEditor
+            otherCosts={seller.otherNonTaxCosts}
+            onChange={(otherNonTaxCosts) => setS("otherNonTaxCosts", otherNonTaxCosts)}
+            idPrefix="otherS"
+            defaultLabel="その他"
+            addButtonLabel="その他経費を追加"
+            emptyLabel="追加のその他経費はありません。"
           />
         </div>
 
@@ -426,13 +390,13 @@ export default function Seller({ seller, setS }) {
         const sokuryo  = parseNum(seller.sokuryo);
         const sozoku   = parseNum(seller.souzokuToroku);
         const ihin     = seller.ihinZanchiJoto !== false ? parseNum(seller.ihinZanchi) : 0;
-        const otherJ   = parseNum(seller.otherJoto);
+        const otherJotoCosts = (seller.otherJotoCosts || []).filter((item) => parseNum(item.amount) > 0);
         const teito    = parseNum(seller.teitoSetsu);
         const jusho    = parseNum(seller.jushoHenko);
         const kenri    = parseNum(seller.kenrishoPunshitsu);
         const ihinNG   = seller.ihinZanchiJoto === false ? parseNum(seller.ihinZanchi) : 0;
         const hikkoshi = parseNum(seller.hikkoshi);
-        const otherS   = parseNum(seller.otherS);
+        const otherNonTaxCosts = (seller.otherNonTaxCosts || []).filter((item) => parseNum(item.amount) > 0);
 
         const yen2 = n => `${Math.round(n || 0).toLocaleString()}円`;
         const min2 = n => `${Math.round(n || 0).toLocaleString()}円`;
@@ -470,7 +434,14 @@ export default function Seller({ seller, setS }) {
         if (sokuryo > 0) expOKRows.push({ no: eNo++, label: "測量費用",             value: min2(sokuryo), note: "" });
         if (sozoku  > 0) expOKRows.push({ no: eNo++, label: "相続登記費用（取得費）", value: min2(sozoku), note: "司法書士報酬込・概算" });
         if (ihin    > 0) expOKRows.push({ no: eNo++, label: "遺品整理・残置物撤去費用", value: min2(ihin), note: "買主要求による" });
-        if (otherJ  > 0) expOKRows.push({ no: eNo++, label: seller.otherJotoLabel || "その他（譲渡費用算入可）", value: min2(otherJ), note: "" });
+        otherJotoCosts.forEach((item) => {
+          expOKRows.push({
+            no: eNo++,
+            label: item.label || "その他（譲渡費用算入可）",
+            value: min2(parseNum(item.amount)),
+            note: "",
+          });
+        });
 
         // 支出行（NG）
         let expNGRows = [];
@@ -480,7 +451,14 @@ export default function Seller({ seller, setS }) {
         if (kenri    > 0) expNGRows.push({ no: nNo++, label: "権利書紛失（本人確認情報）", value: min2(kenri),    note: "司法書士報酬・概算" });
         if (ihinNG   > 0) expNGRows.push({ no: nNo++, label: "遺品整理・残置物撤去費用",   value: min2(ihinNG),   note: "" });
         if (hikkoshi > 0) expNGRows.push({ no: nNo++, label: "引越し費用",               value: min2(hikkoshi), note: "" });
-        if (otherS   > 0) expNGRows.push({ no: nNo++, label: seller.otherSLabel || "その他", value: min2(otherS), note: "" });
+        otherNonTaxCosts.forEach((item) => {
+          expNGRows.push({
+            no: nNo++,
+            label: item.label || "その他",
+            value: min2(parseNum(item.amount)),
+            note: "",
+          });
+        });
 
         const taxLabel = seller.taxKubun === "short"
           ? "短期 39.63%"

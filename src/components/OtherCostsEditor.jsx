@@ -1,7 +1,20 @@
 import NumInput from "./NumInput";
-import { createOtherCost, nextOtherCostId } from "../utils/buyerData";
 
-export default function OtherCostsEditor({ otherCosts, onChange }) {
+function nextCostId(costs, idPrefix) {
+  const ids = new Set(costs.map((item) => item.id));
+  let number = 1;
+  while (ids.has(`${idPrefix}${number}`)) number += 1;
+  return `${idPrefix}${number}`;
+}
+
+export default function OtherCostsEditor({
+  otherCosts,
+  onChange,
+  idPrefix = "other",
+  defaultLabel = "その他",
+  addButtonLabel = "その他費用を追加",
+  emptyLabel = "その他費用はありません。",
+}) {
   const costs = Array.isArray(otherCosts) ? otherCosts : [];
 
   const updateCost = (id, field, value) => {
@@ -15,14 +28,14 @@ export default function OtherCostsEditor({ otherCosts, onChange }) {
   };
 
   const addCost = () => {
-    const id = nextOtherCostId(costs);
-    onChange([...costs, createOtherCost(costs.length, { id })]);
+    const id = nextCostId(costs, idPrefix);
+    onChange([...costs, { id, label: defaultLabel, amount: "" }]);
   };
 
   return (
     <div className="other-costs-editor">
       {costs.length === 0 ? (
-        <p className="other-cost-empty">その他費用はありません。</p>
+        <p className="other-cost-empty">{emptyLabel}</p>
       ) : (
         <div className="other-cost-list">
           {costs.map((cost) => (
@@ -53,7 +66,7 @@ export default function OtherCostsEditor({ otherCosts, onChange }) {
                 className="other-cost-remove"
                 type="button"
                 onClick={() => removeCost(cost.id)}
-                aria-label={`${cost.label || "その他費用"}を削除`}
+                aria-label={`${cost.label || defaultLabel}を削除`}
               >
                 削除
               </button>
@@ -66,9 +79,9 @@ export default function OtherCostsEditor({ otherCosts, onChange }) {
         className="other-cost-add"
         type="button"
         onClick={addCost}
-        aria-label="その他費用を追加"
+        aria-label={addButtonLabel}
       >
-        ＋ その他費用を追加
+        ＋ {addButtonLabel}
       </button>
     </div>
   );

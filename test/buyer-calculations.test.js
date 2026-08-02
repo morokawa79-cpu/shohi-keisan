@@ -160,6 +160,8 @@ test("初期状態ではプラン1のみ有効", () => {
   const buyer = createInitialBuyer("2026-08-02");
   assert.deepEqual(buyer.loanPlans.map((plan) => plan.enabled), [true, false, false]);
   assert.equal(buyer.activeLoanPlanId, "plan1");
+  assert.equal(buyer.loanPlans[0].annualRate, "3");
+  assert.equal(buyer.loanKinri, "3");
 });
 
 test("空欄のプラン名は実際のプラン番号で表示する", () => {

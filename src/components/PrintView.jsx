@@ -9,6 +9,7 @@ import {
   getLoanPlanDisplayName,
   normalizeBuyerData,
 } from "../utils/buyerData";
+import { normalizeSellerData } from "../utils/sellerData";
 
 const yen  = (n) => (!n && n !== 0) || n === "" ? "—" : `¥${Math.round(n).toLocaleString()}`;
 const minus = (n) => !n || n === 0 ? "—" : `▲¥${Math.round(n).toLocaleString()}`;
@@ -37,7 +38,8 @@ function Row({ label, value, indent, bold, borderTop, color }) {
   );
 }
 
-function SellerPrint({ seller }) {
+function SellerPrint({ seller: rawSeller }) {
+  const seller = normalizeSellerData(rawSeller);
   const price    = parseNum(seller.salePriceS);
   const koteishi = parseNum(seller.koteishisanS);
   const kanri    = parseNum(seller.kanrisei);
@@ -67,7 +69,16 @@ function SellerPrint({ seller }) {
         {parseNum(seller.sokuryo)   > 0 && <Row label="測量費用（確定測量等）"  value={minus(parseNum(seller.sokuryo))}   indent />}
         {parseNum(seller.souzokuToroku)     > 0 && <Row label="相続登記費用（取得費）"     value={minus(parseNum(seller.souzokuToroku))}     indent />}
         {seller.ihinZanchiJoto !== false && parseNum(seller.ihinZanchi) > 0 && <Row label="遺品整理・残置物撤去費用" value={minus(parseNum(seller.ihinZanchi))} indent />}
-        {parseNum(seller.otherJoto) > 0 && <Row label={seller.otherJotoLabel || "その他（譲渡費用算入可）"} value={minus(parseNum(seller.otherJoto))} indent />}
+        {seller.otherJotoCosts
+          .filter((item) => parseNum(item.amount) > 0)
+          .map((item) => (
+            <Row
+              key={item.id}
+              label={item.label || "その他（譲渡費用算入可）"}
+              value={minus(parseNum(item.amount))}
+              indent
+            />
+          ))}
 
         {/* 経費 — ❌経費NG */}
         <SectionHead label="■ 経費（支出）　❌ その他経費（税額計算には含まれない）" color="#6b7280" />
@@ -76,10 +87,16 @@ function SellerPrint({ seller }) {
         {parseNum(seller.kenrishoPunshitsu) > 0 && <Row label="権利書紛失（本人確認情報）" value={minus(parseNum(seller.kenrishoPunshitsu))} indent />}
         {seller.ihinZanchiJoto === false && parseNum(seller.ihinZanchi) > 0 && <Row label="遺品整理・残置物撤去費用（買主要求）" value={minus(parseNum(seller.ihinZanchi))} indent />}
         {parseNum(seller.hikkoshi)          > 0 && <Row label="引越し費用"                 value={minus(parseNum(seller.hikkoshi))}          indent />}
-        {parseNum(seller.otherS)            > 0 && <Row label={seller.otherSLabel || "その他"} value={minus(parseNum(seller.otherS))} indent />}
-        {/* 旧フィールド後方互換 */}
-        {parseNum(seller.otherS2) > 0 && <Row label={seller.otherS2Label || "その他"} value={minus(parseNum(seller.otherS2))} indent />}
-        {parseNum(seller.otherS3) > 0 && <Row label={seller.otherS3Label || "その他"} value={minus(parseNum(seller.otherS3))} indent />}
+        {seller.otherNonTaxCosts
+          .filter((item) => parseNum(item.amount) > 0)
+          .map((item) => (
+            <Row
+              key={item.id}
+              label={item.label || "その他"}
+              value={minus(parseNum(item.amount))}
+              indent
+            />
+          ))}
         <Row label="経費合計（税除く）" value={minus(expense)} bold borderTop color="#6b7280" />
 
         {/* 税引前 */}

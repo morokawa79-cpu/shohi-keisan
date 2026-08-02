@@ -105,7 +105,7 @@ function LoanPlanCard({ buyer, plan, index, onUpdate, onAdopt, onDisable }) {
           value={plan.annualRate}
           onChange={(value) => onUpdate({ annualRate: normalizeDecimalInput(value) })}
           inputMode="decimal"
-          placeholder="例：1.2（0%も可）"
+          placeholder="例：3（0%も可）"
         />
         <TextField
           id={`${plan.id}-years`}

@@ -1,4 +1,5 @@
 import { getActiveLoanPlan } from "./buyerData.js";
+import { normalizeSellerData, sumSellerOtherCosts } from "./sellerData.js";
 
 // ── ユーティリティ ──────────────────────────
 export const fmt = (n) =>
@@ -49,67 +50,66 @@ export function calcInshiKinsho(loanAmt) {
 
 // 経費合計（譲渡税除く）
 export function calcSellerExpense(f) {
-  const price = parseNum(f.salePriceS);
-  const chuko = f.autoChukoS !== false ? calcChuko(price) : parseNum(f.manualChukoS);
+  const data = normalizeSellerData(f);
+  const price = parseNum(data.salePriceS);
+  const chuko = data.autoChukoS !== false ? calcChuko(price) : parseNum(data.manualChukoS);
   const items = [
     // 譲渡費用OK
     chuko,
     calcInshiBaibai(price),
-    parseNum(f.kaitai),
-    parseNum(f.metshitsu),
-    parseNum(f.sokuryo),
-    parseNum(f.otherJoto),
+    parseNum(data.kaitai),
+    parseNum(data.metshitsu),
+    parseNum(data.sokuryo),
+    sumSellerOtherCosts(data.otherJotoCosts),
     // 経費NG（手残りには影響・税額計算には含まれない）
-    parseNum(f.teitoSetsu),
-    parseNum(f.jushoHenko),
-    parseNum(f.kenrishoPunshitsu),
-    parseNum(f.souzokuToroku),
-    parseNum(f.ihinZanchi),
-    parseNum(f.hikkoshi),
-    parseNum(f.otherS),
-    // 旧フィールド（後方互換）
-    parseNum(f.otherS2),
-    parseNum(f.otherS3),
+    parseNum(data.teitoSetsu),
+    parseNum(data.jushoHenko),
+    parseNum(data.kenrishoPunshitsu),
+    parseNum(data.souzokuToroku),
+    parseNum(data.ihinZanchi),
+    parseNum(data.hikkoshi),
+    sumSellerOtherCosts(data.otherNonTaxCosts),
   ];
   return items.reduce((a, b) => a + b, 0);
 }
 
 // 譲渡所得税概算
 export function calcJotoZei(f) {
-  const price = parseNum(f.salePriceS);
+  const data = normalizeSellerData(f);
+  const price = parseNum(data.salePriceS);
   if (!price) return { zei: 0, breakdown: null };
 
   // 固定資産税精算金・管理費精算金は売買代金の一部として譲渡収入に含める
-  const totalIncome = price + parseNum(f.koteishisanS) + parseNum(f.kanrisei);
+  const totalIncome = price + parseNum(data.koteishisanS) + parseNum(data.kanrisei);
 
-  const shotokuhi = f.shotokuhi5pct ? totalIncome * 0.05 : parseNum(f.shotokuhi);
+  const shotokuhi = data.shotokuhi5pct ? totalIncome * 0.05 : parseNum(data.shotokuhi);
 
-  const chukoForTax = f.autoChukoS !== false ? calcChuko(price) : parseNum(f.manualChukoS);
+  const chukoForTax = data.autoChukoS !== false ? calcChuko(price) : parseNum(data.manualChukoS);
   const jotoHiyo = chukoForTax
     + calcInshiBaibai(price)
-    + parseNum(f.kaitai)
-    + parseNum(f.sokuryo)
-    + parseNum(f.metshitsu)
-    + parseNum(f.otherJoto)
-    + (f.ihinZanchiJoto !== false ? parseNum(f.ihinZanchi) : 0)
-    + parseNum(f.souzokuToroku);
+    + parseNum(data.kaitai)
+    + parseNum(data.sokuryo)
+    + parseNum(data.metshitsu)
+    + sumSellerOtherCosts(data.otherJotoCosts)
+    + (data.ihinZanchiJoto !== false ? parseNum(data.ihinZanchi) : 0)
+    + parseNum(data.souzokuToroku);
 
   const jotoShotoku = totalIncome - shotokuhi - jotoHiyo;
 
   let kojo = 0;
-  if (f.kojo3000) kojo += 30000000;
-  if (f.kojo3000Sozoku && price <= 100000000) kojo += 30000000;
-  if (f.teiMiriyo) kojo += 1000000;
+  if (data.kojo3000) kojo += 30000000;
+  if (data.kojo3000Sozoku && price <= 100000000) kojo += 30000000;
+  if (data.teiMiriyo) kojo += 1000000;
 
   const kazeiShotoku = Math.max(0, jotoShotoku - kojo);
 
   let zei, zeiritsu;
-  if (f.keigenZeiritsu) {
+  if (data.keigenZeiritsu) {
     const under = Math.min(kazeiShotoku, 60000000);
     const over  = Math.max(0, kazeiShotoku - 60000000);
     zei = Math.floor(under * 0.1421 + over * 0.20315);
     zeiritsu = 0.1421;
-  } else if (f.taxKubun === "short") {
+  } else if (data.taxKubun === "short") {
     zeiritsu = 0.3963;
     zei = Math.floor(kazeiShotoku * zeiritsu);
   } else {

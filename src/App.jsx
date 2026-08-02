@@ -1,14 +1,15 @@
 import { useState } from "react";
-import Seller, { initSeller } from "./pages/Seller";
+import Seller from "./pages/Seller";
 import Buyer from "./pages/Buyer";
 import PrintView from "./components/PrintView";
 import { initBuyer, normalizeBuyerData } from "./utils/buyerData";
+import { initSeller, normalizeSellerData } from "./utils/sellerData";
 
 const STORAGE_KEY = "shohi_cases";
 
 export default function App() {
   const [tab, setTab] = useState("seller");
-  const [seller, setSeller] = useState(initSeller);
+  const [seller, setSeller] = useState(() => normalizeSellerData(initSeller));
   const [buyer, setBuyer] = useState(() => normalizeBuyerData(initBuyer));
   const [savedCases, setSavedCases] = useState(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -35,7 +36,7 @@ export default function App() {
       name,
       type: tab,
       date: new Date().toISOString().slice(0, 10),
-      data: tab === "seller" ? seller : normalizeBuyerData(buyer),
+      data: tab === "seller" ? normalizeSellerData(seller) : normalizeBuyerData(buyer),
     };
     const next = [entry, ...savedCases].slice(0, 50);
     setSaving(true);
@@ -46,7 +47,7 @@ export default function App() {
 
   const handleLoad = (entry) => {
     if (entry.type === "seller") {
-      setSeller(entry.data);
+      setSeller(normalizeSellerData(entry.data));
       setTab("seller");
     } else {
       setBuyer(normalizeBuyerData(entry.data));
