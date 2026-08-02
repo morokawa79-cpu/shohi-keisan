@@ -1,3 +1,5 @@
+import { getActiveLoanPlan } from "./buyerData.js";
+
 // ── ユーティリティ ──────────────────────────
 export const fmt = (n) =>
   n == null || n === "" ? "—" : `¥${Math.round(n).toLocaleString()}`;
@@ -164,36 +166,121 @@ export function calcLoanJimuAuto(loan, rate = 3.3) {
 
 // ── ローンシミュレーション ───────────────────
 export function calcLoan(principal, annualRate, years) {
-  if (!principal || !annualRate || !years) return null;
-  const r = annualRate / 100 / 12;
-  const n = years * 12;
+  if (annualRate === "" || annualRate == null) return null;
+  const principalValue = Number(principal);
+  const annualRateValue = Number(annualRate);
+  const yearsValue = Number(years);
+  if (
+    !Number.isFinite(principalValue)
+    || !Number.isFinite(annualRateValue)
+    || !Number.isFinite(yearsValue)
+    || principalValue <= 0
+    || yearsValue <= 0
+    || annualRateValue < 0
+  ) return null;
+
+  const r = annualRateValue / 100 / 12;
+  const n = yearsValue * 12;
   if (r === 0) {
-    const monthly = Math.floor(principal / n);
-    return { monthly, total: monthly * n, interest: 0 };
+    const monthly = Math.floor(principalValue / n);
+    return { monthly, total: principalValue, interest: 0 };
   }
-  const monthly = Math.floor(principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
+  const monthly = Math.floor(principalValue * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1));
   const total = monthly * n;
-  return { monthly, total, interest: total - principal };
+  return { monthly, total, interest: total - principalValue };
 }
 
-export function calcBuyerTotal(f) {
+export function calcBuyerCommonCostBreakdown(f) {
   const price = parseNum(f.salePriceB);
-  const loan = parseNum(f.loanAmtB);
   const jky = f.jukyoyo !== false;
-  const items = [
-    f.autoChukoB !== false ? calcChuko(price) : parseNum(f.manualChukoB),
-    calcInshiBaibai(price),
-    calcInshiKinsho(loan),
-    f.autoIdo      !== false ? calcIdoKirokuAuto(price, jky)                             : parseNum(f.idoKiroku),
-    f.autoTeito    !== false ? calcTeitoSetsuBAuto(loan, jky)                            : parseNum(f.teitoSetsuB),
-    f.autoFudo     !== false ? calcFudosanShutokuAuto(price, jky)                        : parseNum(f.fudosanShutoku),
-    f.autoLoanJimu !== false ? calcLoanJimuAuto(loan, parseFloat(f.loanJimuRate) || 3.3) : parseNum(f.loanJimu),
-    parseNum(f.kasai),
-    parseNum(f.koteishisan),
-    parseNum(f.kanriB),
-    parseNum(f.reform),
-    parseNum(f.hikkoshiB),
-    parseNum(f.otherB),
-  ];
-  return items.reduce((a, b) => a + b, 0);
+  const otherCosts = Array.isArray(f.otherCosts)
+    ? f.otherCosts
+    : [{ amount: f.otherB }];
+
+  return {
+    brokerage: f.autoChukoB !== false
+      ? calcChuko(price)
+      : parseNum(f.manualChukoB),
+    saleContractStamp: calcInshiBaibai(price),
+    ownershipRegistration: f.autoIdo !== false
+      ? calcIdoKirokuAuto(price, jky)
+      : parseNum(f.idoKiroku),
+    realEstateAcquisitionTax: f.autoFudo !== false
+      ? calcFudosanShutokuAuto(price, jky)
+      : parseNum(f.fudosanShutoku),
+    insurance: parseNum(f.kasai),
+    propertyTaxSettlement: parseNum(f.koteishisan),
+    managementFeeSettlement: parseNum(f.kanriB),
+    renovation: parseNum(f.reform),
+    moving: parseNum(f.hikkoshiB),
+    other: otherCosts.reduce((sum, item) => sum + parseNum(item?.amount), 0),
+  };
+}
+
+export function calcBuyerCommonCosts(f) {
+  return Object.values(calcBuyerCommonCostBreakdown(f))
+    .reduce((sum, value) => sum + value, 0);
+}
+
+export function calcLoanPlanCostBreakdown(f, plan) {
+  const loan = parseNum(plan?.amount);
+  const jky = f.jukyoyo !== false;
+  const feeRateText = String(plan?.loanFeeRate ?? "").trim();
+  const feeRate = feeRateText === "" ? Number.NaN : Number(feeRateText);
+  const normalizedFeeRate = Number.isFinite(feeRate) && feeRate >= 0 ? feeRate : 0;
+
+  return {
+    loanContractStamp: calcInshiKinsho(loan),
+    mortgageRegistration: f.autoTeito !== false
+      ? calcTeitoSetsuBAuto(loan, jky)
+      : parseNum(f.teitoSetsuB),
+    loanFee: plan?.loanFeeMode === "manual"
+      ? parseNum(plan.manualLoanFee)
+      : calcLoanJimuAuto(loan, normalizedFeeRate),
+  };
+}
+
+export function calcLoanPlanCosts(f, plan) {
+  return Object.values(calcLoanPlanCostBreakdown(f, plan))
+    .reduce((sum, value) => sum + value, 0);
+}
+
+export function calcBuyerTotalForPlan(f, plan) {
+  return calcBuyerCommonCosts(f) + calcLoanPlanCosts(f, plan);
+}
+
+export function calcPurchaseTotalForPlan(f, plan) {
+  return parseNum(f.salePriceB) + calcBuyerTotalForPlan(f, plan);
+}
+
+export function calcRequiredOwnFunds(f, plan) {
+  return Math.max(0, calcPurchaseTotalForPlan(f, plan) - parseNum(plan?.amount));
+}
+
+export function calcBorrowingExcess(f, plan) {
+  return Math.max(0, parseNum(plan?.amount) - calcPurchaseTotalForPlan(f, plan));
+}
+
+export function calcBuyerPlanSummary(f, plan) {
+  const commonCosts = calcBuyerCommonCosts(f);
+  const loanCosts = calcLoanPlanCosts(f, plan);
+  const costsTotal = commonCosts + loanCosts;
+  const purchaseTotal = parseNum(f.salePriceB) + costsTotal;
+  const loanAmount = parseNum(plan?.amount);
+
+  return {
+    commonCosts,
+    loanCosts,
+    costsTotal,
+    purchaseTotal,
+    loanAmount,
+    requiredOwnFunds: Math.max(0, purchaseTotal - loanAmount),
+    borrowingExcess: Math.max(0, loanAmount - purchaseTotal),
+    loan: calcLoan(plan?.amount, plan?.annualRate, plan?.years),
+  };
+}
+
+// 旧呼出し元向け。現在は採用中のローンプランで計算する。
+export function calcBuyerTotal(f) {
+  return calcBuyerTotalForPlan(f, getActiveLoanPlan(f));
 }

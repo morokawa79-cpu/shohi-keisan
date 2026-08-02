@@ -15,35 +15,6 @@ import {
   calcBuyerTotal,
 } from "../utils/calc";
 
-export const initBuyer = {
-  caseNameB: "",
-  customerNameB: "",
-  dateB: new Date().toISOString().slice(0, 10),
-  salePriceB: "",
-  loanAmtB: "",
-  jukyoyo: true,
-  shinchiku: false,
-  autoChukoB: true,   manualChukoB: "",
-  autoIdo: true,
-  autoTeito: true,
-  autoFudo: true,
-  autoLoanJimu: true,
-  idoKiroku: "",
-  teitoSetsuB: "",
-  fudosanShutoku: "",
-  loanJimu: "",
-  kasai: "",
-  koteishisan: "",
-  kanriB: "",
-  reform: "",
-  hikkoshiB: "",
-  otherB: "",
-  otherBLabel: "その他",
-  loanKinri: "1.2",
-  loanKikan: "35",
-  loanJimuRate: "3.3",
-};
-
 export default function Buyer({ buyer, setB }) {
   const buyerPrice = parseNum(buyer.salePriceB);
   const buyerLoan = parseNum(buyer.loanAmtB);

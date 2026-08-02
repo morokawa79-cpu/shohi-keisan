@@ -1,24 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Seller, { initSeller } from "./pages/Seller";
-import Buyer, { initBuyer } from "./pages/Buyer";
+import Buyer from "./pages/Buyer";
 import PrintView from "./components/PrintView";
+import { initBuyer, normalizeBuyerData } from "./utils/buyerData";
 
 const STORAGE_KEY = "shohi_cases";
 
 export default function App() {
   const [tab, setTab] = useState("seller");
   const [seller, setSeller] = useState(initSeller);
-  const [buyer, setBuyer] = useState(initBuyer);
-  const [savedCases, setSavedCases] = useState([]);
+  const [buyer, setBuyer] = useState(() => normalizeBuyerData(initBuyer));
+  const [savedCases, setSavedCases] = useState(() => {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
   const [showList, setShowList] = useState(false);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try { setSavedCases(JSON.parse(raw)); } catch {}
-    }
-  }, []);
 
   const setS = (key, val) => setSeller(p => ({ ...p, [key]: val }));
   const setB = (key, val) => setBuyer(p => ({ ...p, [key]: val }));
@@ -32,7 +35,7 @@ export default function App() {
       name,
       type: tab,
       date: new Date().toISOString().slice(0, 10),
-      data: tab === "seller" ? seller : buyer,
+      data: tab === "seller" ? seller : normalizeBuyerData(buyer),
     };
     const next = [entry, ...savedCases].slice(0, 50);
     setSaving(true);
@@ -46,7 +49,7 @@ export default function App() {
       setSeller(entry.data);
       setTab("seller");
     } else {
-      setBuyer(entry.data);
+      setBuyer(normalizeBuyerData(entry.data));
       setTab("buyer");
     }
     setShowList(false);
