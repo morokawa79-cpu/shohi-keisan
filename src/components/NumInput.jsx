@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 
-export default function NumInput({ value, onChange, style }) {
-  const [display, setDisplay] = useState(() => {
-    const n = parseFloat(String(value).replace(/,/g, ""));
-    return !isNaN(n) && n !== 0 ? n.toLocaleString() : (value || "");
-  });
+const formatDisplayValue = (value) => {
+  if (value === "" || value === undefined || value === null) return "";
+  const n = parseFloat(String(value).replace(/,/g, ""));
+  return !isNaN(n) ? n.toLocaleString() : String(value);
+};
+
+export default function NumInput({ value, onChange, style, ...inputProps }) {
+  const [display, setDisplay] = useState(() => formatDisplayValue(value));
 
   useEffect(() => {
-    if (value === "" || value === undefined) {
-      setDisplay("");
-    } else {
-      const n = parseFloat(String(value).replace(/,/g, ""));
-      if (!isNaN(n) && n > 0) setDisplay(n.toLocaleString());
-    }
+    setDisplay(formatDisplayValue(value));
   }, [value]);
 
   const handleChange = (e) => {
@@ -23,6 +21,7 @@ export default function NumInput({ value, onChange, style }) {
 
   return (
     <input
+      {...inputProps}
       type="text"
       inputMode="numeric"
       value={display}

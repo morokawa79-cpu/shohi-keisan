@@ -78,9 +78,21 @@ export default function App() {
             font-size: 12px !important;
           }
           section, .print-block { break-inside: avoid; page-break-inside: avoid; }
+          .print-detail-table tr, .print-loan-comparison tr { break-inside: avoid; page-break-inside: avoid; }
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           h1, h2, h3 { margin: 4px 0 !important; }
           body, div, span, label { font-size: 11px !important; line-height: 1.4 !important; }
+          .buyer-print-area { box-shadow: none !important; max-width: 100% !important; padding: 0 !important; }
+          .buyer-print-area,
+          .buyer-print-area div,
+          .buyer-print-area span,
+          .buyer-print-area label { font-size: 10px !important; line-height: 1.35 !important; }
+          .buyer-print-area .print-document-title { font-size: 16px !important; line-height: 1.3 !important; }
+          .buyer-print-area .print-document-meta { flex-wrap: wrap !important; gap: 3px 16px !important; }
+          .buyer-print-area .print-document-meta span { font-size: 10px !important; line-height: 1.4 !important; }
+          .buyer-print-area .print-detail-table th,
+          .buyer-print-area .print-detail-table td { font-size: 10px !important; line-height: 1.25 !important; padding-top: 3px !important; padding-bottom: 3px !important; }
+          .buyer-print-area .print-loan-comparison th span { font-size: 8px !important; }
           .print-only { display: block !important; }
         }
         .print-only { display: none; }
@@ -92,7 +104,7 @@ export default function App() {
       <PrintView tab={tab} seller={seller} buyer={buyer} />
 
       {/* ヘッダー */}
-      <div className="no-print" style={{
+      <div className="no-print app-header" style={{
         background: "#1e3a5f",
         padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between",
         borderBottom: "2px solid #d4a744"
@@ -101,7 +113,7 @@ export default function App() {
           <div style={{ color: "#d4a744", fontSize: 10, letterSpacing: "0.2em", fontWeight: 600 }}>REAL ESTATE</div>
           <div style={{ color: "#fff", fontSize: 17, fontWeight: 700, letterSpacing: "0.05em" }}>諸費用計算書</div>
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div className="app-header-actions" style={{ display: "flex", gap: 8 }}>
           <button onClick={() => setShowList(!showList)} style={{
             padding: "6px 14px", background: "transparent", border: "1px solid rgba(212,167,68,0.4)",
             borderRadius: 6, color: "#e0e7ee", fontSize: 12, cursor: "pointer"
@@ -170,7 +182,7 @@ export default function App() {
       </div>
 
       {/* 本体（印刷時は非表示） */}
-      <div className="no-print" style={{ maxWidth: 720, margin: "0 auto", padding: "16px 16px 40px" }}>
+      <div className="no-print app-main" style={{ maxWidth: 720, margin: "0 auto", padding: "16px 16px 40px" }}>
         {tab === "seller" && <Seller seller={seller} setS={setS} />}
         {tab === "buyer" && <Buyer buyer={buyer} setB={setB} />}
       </div>

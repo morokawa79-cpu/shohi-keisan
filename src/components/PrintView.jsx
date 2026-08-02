@@ -1,9 +1,14 @@
 import {
-  parseNum, calcChuko, calcInshiBaibai, calcInshiKinsho,
+  parseNum, calcChuko, calcInshiBaibai,
   calcSellerExpense, calcJotoZei,
-  calcIdoKirokuAuto, calcTeitoSetsuBAuto, calcFudosanShutokuAuto,
-  calcLoanJimuAuto, calcLoan, calcBuyerTotal,
+  calcBuyerCommonCostBreakdown, calcLoanPlanCostBreakdown,
+  calcBuyerPlanSummary,
 } from "../utils/calc";
+import {
+  getActiveLoanPlan,
+  getLoanPlanDisplayName,
+  normalizeBuyerData,
+} from "../utils/buyerData";
 
 const yen  = (n) => (!n && n !== 0) || n === "" ? "—" : `¥${Math.round(n).toLocaleString()}`;
 const minus = (n) => !n || n === 0 ? "—" : `▲¥${Math.round(n).toLocaleString()}`;
@@ -111,63 +116,109 @@ function SellerPrint({ seller }) {
 }
 
 function BuyerPrint({ buyer }) {
-  const price = parseNum(buyer.salePriceB);
-  const loan  = parseNum(buyer.loanAmtB);
-  const jky   = buyer.jukyoyo !== false;
-  const total = calcBuyerTotal(buyer);
+  const data = normalizeBuyerData(buyer);
+  const price = parseNum(data.salePriceB);
+  const activePlan = getActiveLoanPlan(data);
+  const commonCosts = calcBuyerCommonCostBreakdown(data);
+  const activeLoanCosts = calcLoanPlanCostBreakdown(data, activePlan);
+  const activeSummary = calcBuyerPlanSummary(data, activePlan);
+  const activePlanName = getLoanPlanDisplayName(data, activePlan);
+  const comparablePlans = data.loanPlans.filter(
+    (plan) => plan.enabled && plan.amount != null && String(plan.amount).trim() !== "",
+  );
+  const comparisonPlans = comparablePlans.map((plan) => ({
+    plan,
+    summary: calcBuyerPlanSummary(data, plan),
+  }));
+  const otherCosts = data.otherCosts.filter((item) => parseNum(item.amount) > 0);
+  const loanFeeLabel = activePlan.loanFeeMode === "auto"
+    ? `ローン事務手数料（${activePlan.loanFeeRate === "" ? "率未入力" : `${activePlan.loanFeeRate}%`}）`
+    : "ローン事務手数料（手入力）";
 
-  const chuko    = buyer.autoChukoB    !== false ? calcChuko(price)                                              : parseNum(buyer.manualChukoB);
-  const ido      = buyer.autoIdo       !== false ? calcIdoKirokuAuto(price, jky)                                 : parseNum(buyer.idoKiroku);
-  const teito    = buyer.autoTeito     !== false ? calcTeitoSetsuBAuto(loan, jky)                                : parseNum(buyer.teitoSetsuB);
-  const fudo     = buyer.autoFudo      !== false ? calcFudosanShutokuAuto(price, jky)                            : parseNum(buyer.fudosanShutoku);
-  const loanJimu = buyer.autoLoanJimu  !== false ? calcLoanJimuAuto(loan, parseFloat(buyer.loanJimuRate) || 3.3) : parseNum(buyer.loanJimu);
-
-  const loanSim = calcLoan(loan, parseFloat(buyer.loanKinri) || 0, parseFloat(buyer.loanKikan) || 0);
+  const comparisonRows = [
+    { label: "金融機関・商品名", value: ({ plan }) => plan.lenderName || "—" },
+    { label: "借入額", value: ({ summary }) => yen(summary.loanAmount) },
+    { label: "金利", value: ({ plan }) => plan.annualRate === "" ? "—" : `${plan.annualRate}%` },
+    { label: "期間", value: ({ plan }) => plan.years === "" ? "—" : `${plan.years}年` },
+    { label: "月々返済額", value: ({ summary }) => summary.loan ? yen(summary.loan.monthly) : "—" },
+    { label: "総返済額", value: ({ summary }) => summary.loan ? yen(summary.loan.total) : "—" },
+    { label: "総利息", value: ({ summary }) => summary.loan ? yen(summary.loan.interest) : "—" },
+    { label: "必要自己資金", value: ({ summary }) => yen(summary.requiredOwnFunds) },
+  ];
 
   return (
-    <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: 20 }}>
-      <tbody>
-        {/* 売買金額 */}
-        <SectionHead label="■ 売買金額" color="#78716c" />
-        <Row label="売買金額" value={yen(price)} indent />
-        {parseNum(buyer.koteishisan) > 0 && <Row label="固定資産税・都市計画税精算" value={yen(parseNum(buyer.koteishisan))} indent />}
-        {parseNum(buyer.kanriB)      > 0 && <Row label="管理費・修繕積立金精算"     value={yen(parseNum(buyer.kanriB))}      indent />}
+    <div className="buyer-print-content">
+      <table className="print-detail-table" style={{ width: "100%", borderCollapse: "collapse", marginBottom: 12 }}>
+        <tbody>
+          <SectionHead label="■ 売買金額" color="#78716c" />
+          <Row label="売買金額" value={yen(price)} indent />
+          {commonCosts.propertyTaxSettlement > 0 && <Row label="固定資産税・都市計画税精算" value={yen(commonCosts.propertyTaxSettlement)} indent />}
+          {commonCosts.managementFeeSettlement > 0 && <Row label="管理費・修繕積立金精算" value={yen(commonCosts.managementFeeSettlement)} indent />}
 
-        {/* 諸費用 */}
-        <SectionHead label="■ 諸費用内訳" color="#78716c" />
-        <Row label="仲介手数料（消費税込）"           value={yen(chuko)}                        indent />
-        <Row label="印紙代（売買契約書）"             value={yen(calcInshiBaibai(price))}       indent />
-        <Row label="印紙代（金銭消費貸借契約書）"     value={yen(calcInshiKinsho(loan))}        indent />
-        <Row label={`所有権移転登記費用${buyer.autoIdo !== false ? "（概算）" : ""}`}            value={yen(ido)}   indent />
-        <Row label={`抵当権設定登記費用${buyer.autoTeito !== false ? "（概算）" : ""}`}          value={yen(teito)} indent />
-        <Row label={`不動産取得税${buyer.autoFudo !== false ? "（概算）" : ""}`}                 value={yen(fudo)}  indent />
-        <Row label={`ローン事務手数料${buyer.autoLoanJimu !== false ? `（${buyer.loanJimuRate || 3.3}%）` : ""}`} value={yen(loanJimu)} indent />
-        {parseNum(buyer.kasai)    > 0 && <Row label="火災保険・地震保険（概算）" value={yen(parseNum(buyer.kasai))}    indent />}
-        {parseNum(buyer.reform)   > 0 && <Row label="リフォーム費用"             value={yen(parseNum(buyer.reform))}   indent />}
-        {parseNum(buyer.hikkoshiB)> 0 && <Row label="引越し費用"                 value={yen(parseNum(buyer.hikkoshiB))} indent />}
-        {parseNum(buyer.otherB)   > 0 && <Row label={buyer.otherBLabel || "その他"} value={yen(parseNum(buyer.otherB))} indent />}
-        <Row label="諸費用合計（概算）" value={yen(total)} bold borderTop />
+          <SectionHead label={`■ 諸費用内訳（採用：${activePlanName}）`} color="#78716c" />
+          <Row label="仲介手数料（消費税込）" value={yen(commonCosts.brokerage)} indent />
+          <Row label="印紙代（売買契約書）" value={yen(commonCosts.saleContractStamp)} indent />
+          <Row label="印紙代（金銭消費貸借契約書）" value={yen(activeLoanCosts.loanContractStamp)} indent />
+          <Row label={`所有権移転登記費用${data.autoIdo !== false ? "（概算）" : ""}`} value={yen(commonCosts.ownershipRegistration)} indent />
+          <Row label={`抵当権設定登記費用${data.autoTeito !== false ? "（概算）" : ""}`} value={yen(activeLoanCosts.mortgageRegistration)} indent />
+          <Row label={`不動産取得税${data.autoFudo !== false ? "（概算）" : ""}`} value={yen(commonCosts.realEstateAcquisitionTax)} indent />
+          <Row label={loanFeeLabel} value={yen(activeLoanCosts.loanFee)} indent />
+          {commonCosts.insurance > 0 && <Row label="火災保険・地震保険（概算）" value={yen(commonCosts.insurance)} indent />}
+          {commonCosts.renovation > 0 && <Row label="リフォーム費用" value={yen(commonCosts.renovation)} indent />}
+          {commonCosts.moving > 0 && <Row label="引越し費用" value={yen(commonCosts.moving)} indent />}
+          {otherCosts.map((item) => (
+            <Row key={item.id} label={item.label || "その他"} value={yen(parseNum(item.amount))} indent />
+          ))}
+          <Row label="諸費用合計（概算）" value={yen(activeSummary.costsTotal)} bold borderTop />
 
-        {/* 総額 */}
-        <SectionHead label="■ 総額" color="#a16a46" />
-        <Row label="売買金額"         value={yen(price)}         indent />
-        <Row label="諸費用合計（概算）" value={yen(total)}         indent />
-        <Row label="購入総額（概算）"  value={yen(price + total)} bold borderTop color="#a16a46" />
+          <SectionHead label="■ 購入サマリー" color="#a16a46" />
+          <Row label="売買金額" value={yen(price)} indent />
+          <Row label="諸費用合計（概算）" value={yen(activeSummary.costsTotal)} indent />
+          <Row label="購入総額（概算）" value={yen(activeSummary.purchaseTotal)} bold />
+          <Row label="採用ローンプラン" value={`${activePlanName}${activePlan.lenderName ? `（${activePlan.lenderName}）` : ""}`} indent />
+          <Row label="採用プラン借入予定額" value={yen(activeSummary.loanAmount)} indent />
+          <Row label="必要自己資金（概算）" value={yen(activeSummary.requiredOwnFunds)} bold borderTop color="#a16a46" />
+          {activeSummary.borrowingExcess > 0 && (
+            <tr className="print-overloan-warning">
+              <td colSpan={2}>
+                ※借入予定額が購入総額を{yen(activeSummary.borrowingExcess)}上回っています。
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
 
-        {/* ローンシミュレーション */}
-        {loan > 0 && loanSim && (
-          <>
-            <SectionHead label="■ ローンシミュレーション（元利均等）" color="#78716c" />
-            <Row label="借入予定額"   value={yen(loan)}                   indent />
-            <Row label="金利（年率）" value={`${buyer.loanKinri || "—"}%`} indent />
-            <Row label="返済期間"     value={`${buyer.loanKikan || "—"}年`} indent />
-            <Row label="月々返済額"   value={yen(loanSim.monthly)}         indent bold />
-            <Row label="総返済額"     value={yen(loanSim.total)}           indent />
-            <Row label="総利息"       value={yen(loanSim.interest)}        indent />
-          </>
-        )}
-      </tbody>
-    </table>
+      {comparisonPlans.length > 0 && (
+        <div className="print-loan-comparison-block print-block">
+          <div className="print-comparison-title">■ ローンプラン比較（元利均等返済）</div>
+          <table className="print-loan-comparison">
+          <thead>
+            <tr>
+              <th>比較項目</th>
+              {comparisonPlans.map(({ plan }) => (
+                <th key={plan.id} className={plan.id === data.activeLoanPlanId ? "is-active" : ""}>
+                  {getLoanPlanDisplayName(data, plan)}
+                  {plan.id === data.activeLoanPlanId && <span>採用中</span>}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row) => (
+              <tr key={row.label}>
+                <th scope="row">{row.label}</th>
+                {comparisonPlans.map((comparisonPlan) => (
+                  <td key={comparisonPlan.plan.id} className={comparisonPlan.plan.id === data.activeLoanPlanId ? "is-active" : ""}>
+                    {row.value(comparisonPlan)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+          </table>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -179,13 +230,13 @@ export default function PrintView({ tab, seller, buyer }) {
     : { title: "買主向け", name: buyer.caseNameB,  customer: buyer.customerNameB,  date: buyer.dateB };
 
   return (
-    <div className="print-only" style={{ fontFamily: "'Hiragino Sans','Noto Sans JP',sans-serif", fontSize: 11, color: "#111", padding: "0 4mm" }}>
+    <div className={isSeller ? "print-only" : "print-only buyer-print-area"} style={{ fontFamily: "'Hiragino Sans','Noto Sans JP',sans-serif", fontSize: 11, color: "#111", padding: "0 4mm" }}>
       {/* ヘッダー */}
       <div style={{ borderBottom: `3px solid ${headColor}`, paddingBottom: 8, marginBottom: 12 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: headColor }}>
+        <div className="print-document-title" style={{ fontSize: 16, fontWeight: 700, color: headColor }}>
           不動産諸費用計算書（{info.title}）
         </div>
-        <div style={{ display: "flex", gap: 24, marginTop: 6, fontSize: 11, color: "#374151" }}>
+        <div className="print-document-meta" style={{ display: "flex", gap: 24, marginTop: 6, fontSize: 11, color: "#374151" }}>
           {info.name     && <span>案件名：{info.name}</span>}
           {info.customer && <span>{isSeller ? "売主" : "買主"}様名：{info.customer}</span>}
           {info.date     && <span>作成日：{info.date}</span>}
@@ -206,12 +257,20 @@ export default function PrintView({ tab, seller, buyer }) {
       {isSeller ? <SellerPrint seller={seller} /> : <BuyerPrint buyer={buyer} />}
 
       {/* 免責事項 */}
-      <div style={{ borderTop: "1px solid #d1d5db", paddingTop: 6, fontSize: 9, color: "#9ca3af", lineHeight: 1.7 }}>
-        ※本書は概算であり、実際の費用とは異なる場合があります。
-        ※譲渡所得税の計算は必ず税理士にご確認ください。
-        ※登記費用は実際の固定資産税評価額により変わります。
-        ※印紙代は軽減税率（令和9年3月31日まで）を適用しています。
-      </div>
+      {isSeller ? (
+        <div style={{ borderTop: "1px solid #d1d5db", paddingTop: 6, fontSize: 9, color: "#9ca3af", lineHeight: 1.7 }}>
+          ※本書は概算であり、実際の費用とは異なる場合があります。
+          ※譲渡所得税の計算は必ず税理士にご確認ください。
+          ※登記費用は実際の固定資産税評価額により変わります。
+          ※印紙代は軽減税率（令和9年3月31日まで）を適用しています。
+        </div>
+      ) : (
+        <div className="print-disclaimer" style={{ borderTop: "1px solid #d1d5db", paddingTop: 6, fontSize: 9, color: "#9ca3af", lineHeight: 1.7 }}>
+          <span>※本書は概算であり、実際の費用とは異なる場合があります。</span>
+          <span>※登記費用は実際の固定資産税評価額により変わります。</span>
+          <span>※印紙代は軽減税率（令和9年3月31日まで）を適用しています。</span>
+        </div>
+      )}
     </div>
   );
 }

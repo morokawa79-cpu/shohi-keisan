@@ -1,111 +1,820 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  color: #374151;
+  background: #f9fafb;
+  color-scheme: light;
+  font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
 body {
   margin: 0;
+  background: #f9fafb;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* 買主ローンプラン */
+.loan-plan-editor {
+  margin: 18px 0;
+  padding: 14px;
+  border: 1px solid #ead8c7;
+  border-radius: 10px;
+  background: #faf3e8;
+  color: #374151;
+  text-align: left;
+}
+
+.loan-plan-editor-heading {
   display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+.loan-plan-editor-heading h3,
+.loan-comparison__title {
   margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
+  color: #7c4a2a;
   font-size: 15px;
-  line-height: 135%;
+  font-weight: 700;
+}
+
+.loan-plan-editor-heading p {
+  margin-top: 3px;
+  color: #78716c;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.loan-plan-add-button,
+.other-cost-add {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border: 1px solid #a16a46;
+  border-radius: 6px;
+  background: #fff;
+  color: #7c4a2a;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.loan-plan-add-button:hover,
+.other-cost-add:hover {
+  background: #fff8ef;
+}
+
+.loan-plan-list {
+  display: grid;
+  gap: 12px;
+}
+
+.loan-plan-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #ded8d3;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(92, 63, 43, 0.06);
+}
+
+.loan-plan-card.is-active {
+  border: 2px solid #a16a46;
+  background: #fffdf9;
+  box-shadow: 0 3px 10px rgba(124, 74, 42, 0.12);
+}
+
+.loan-plan-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #eee7e1;
+}
+
+.loan-plan-card-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #7c4a2a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.loan-plan-card-subtitle {
+  margin-top: 2px;
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+.loan-plan-active-badge,
+.loan-comparison__active-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #a16a46;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.loan-plan-adopt-control,
+.loan-fee-mode-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #57534e;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.loan-plan-adopt-control input,
+.loan-fee-mode-row input {
+  accent-color: #a16a46;
+}
+
+.loan-plan-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.loan-plan-field {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.loan-plan-field > input,
+.loan-plan-input-with-unit input,
+.loan-fee-custom-rate input,
+.loan-fee-manual-input input,
+.other-cost-label-input,
+.other-cost-amount-input input {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #1f2937;
+  outline: none;
+}
+
+.loan-plan-input-with-unit,
+.loan-fee-custom-rate,
+.other-cost-amount-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.loan-plan-input-with-unit > span,
+.loan-fee-custom-rate > span,
+.other-cost-unit {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.loan-fee-fieldset {
+  min-width: 0;
+  margin: 12px 0 0;
+  padding: 10px;
+  border: 1px solid #e5e0dc;
+  border-radius: 7px;
+  background: #fafafa;
+}
+
+.loan-fee-fieldset legend {
+  padding: 0 5px;
+  color: #57534e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.loan-fee-mode-row,
+.loan-fee-rate-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.loan-fee-auto-panel {
+  margin-top: 9px;
+}
+
+.loan-fee-rate-row > label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border: 1px solid #d6d3d1;
+  border-radius: 999px;
+  background: #fff;
+  color: #57534e;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.loan-fee-rate-row > label.is-selected {
+  border-color: #a16a46;
+  background: #a16a46;
+  color: #fff;
+}
+
+.loan-fee-rate-row > label input {
+  accent-color: #7c4a2a;
+}
+
+.loan-fee-custom-rate {
+  width: 118px;
+}
+
+.loan-fee-calculated {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.loan-fee-calculated strong {
+  margin-left: 6px;
+  color: #7c4a2a;
+  font-size: 13px;
+}
+
+.loan-fee-rate-warning {
+  display: block;
+  margin-top: 4px;
+  color: #92400e;
+}
+
+.loan-fee-manual-input {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 220px);
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.loan-plan-quick-results,
+.active-loan-income-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.loan-plan-quick-results > div,
+.active-loan-income-grid > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #f1dfca;
+  border-radius: 7px;
+  background: #faf3e8;
+  text-align: center;
+}
+
+.loan-plan-quick-results span,
+.active-loan-income-grid span {
+  color: #78716c;
+  font-size: 10px;
+}
+
+.loan-plan-quick-results strong,
+.active-loan-income-grid strong {
+  color: #7c4a2a;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.loan-plan-empty-result {
+  margin-top: 12px;
+  padding: 9px;
+  border-radius: 6px;
+  background: #f9fafb;
+  color: #9ca3af;
+  font-size: 11px;
+  text-align: center;
+}
+
+.loan-plan-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.loan-plan-disable-button,
+.other-cost-remove {
+  padding: 5px 9px;
+  border: 1px solid #d6d3d1;
+  border-radius: 5px;
+  background: #fff;
+  color: #78716c;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.loan-comparison {
+  margin-top: 15px;
+}
+
+.loan-comparison__title {
+  margin-bottom: 8px;
+}
+
+.loan-comparison__empty {
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px dashed #d6d3d1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #78716c;
+  font-size: 11px;
+  text-align: center;
+}
+
+.loan-comparison__table-scroll {
+  overflow-x: auto;
+  border: 1px solid #ded8d3;
+  border-radius: 7px;
+  background: #fff;
+  scrollbar-gutter: stable;
+}
+
+.loan-comparison__table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  color: #374151;
+  font-size: 11px;
+}
+
+.loan-comparison__table th,
+.loan-comparison__table td {
+  padding: 7px 9px;
+  border-right: 1px solid #eee7e1;
+  border-bottom: 1px solid #eee7e1;
+}
+
+.loan-comparison__table tr:last-child th,
+.loan-comparison__table tr:last-child td {
+  border-bottom: 0;
+}
+
+.loan-comparison__table th:last-child,
+.loan-comparison__table td:last-child {
+  border-right: 0;
+}
+
+.loan-comparison__item-heading,
+.loan-comparison__row-label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 128px;
+  background: #f7f5f3;
+  color: #57534e;
+  text-align: left;
+}
+
+.loan-comparison__plan-heading {
+  background: #78716c;
+  color: #fff;
+  text-align: center;
+}
+
+.loan-comparison__plan-heading--active {
+  background: #7c4a2a;
+}
+
+.loan-comparison__plan-heading .loan-comparison__active-badge {
+  margin-left: 6px;
+  background: #f5e6d3;
+  color: #7c4a2a;
+}
+
+.loan-comparison__value {
+  background: #fff;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.loan-comparison__value--active {
+  background: #fff8ef;
+  color: #7c4a2a;
+  font-weight: 700;
+}
+
+.loan-comparison__mobile {
+  display: none;
+}
+
+.active-loan-income-guide {
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.active-loan-income-title {
+  color: #57534e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.active-loan-income-guide p {
+  margin-top: 7px;
+  color: #9ca3af;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* 必要自己資金 */
+.own-funds-summary {
+  margin-top: 8px;
+  padding: 15px 18px;
+  border: 2px solid #a16a46;
+  border-radius: 9px;
+  background: #faf3e8;
+  color: #57534e;
+  text-align: left;
+  box-shadow: 0 3px 10px rgba(124, 74, 42, 0.12);
+}
+
+.own-funds-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.own-funds-summary-label,
+.own-funds-summary-plan {
+  display: block;
+}
+
+.own-funds-summary-label {
+  color: #7c4a2a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.own-funds-summary-plan {
+  margin-top: 2px;
+  color: #78716c;
+  font-size: 10px;
+}
+
+.own-funds-summary-head strong {
+  color: #7c4a2a;
+  font-size: 24px;
+  white-space: nowrap;
+}
+
+.own-funds-formula {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid #ead8c7;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.own-funds-warning {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.own-funds-summary > p {
+  margin-top: 8px;
+  color: #78716c;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* 可変のその他費用 */
+.other-costs-editor {
+  padding-top: 6px;
+  text-align: left;
+}
+
+.other-cost-list {
+  display: grid;
+  gap: 7px;
+}
+
+.other-cost-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.8fr) auto;
+  align-items: end;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #e8edf2;
+  border-radius: 7px;
+  background: #fafafa;
+}
+
+.other-cost-label-field,
+.other-cost-amount-field {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.other-cost-field-label {
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+.other-cost-empty {
+  padding: 8px;
+  color: #9ca3af;
+  font-size: 11px;
+  text-align: center;
+}
+
+.other-cost-add {
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .loan-plan-editor {
+    margin-inline: -4px;
+    padding: 11px;
+  }
+
+  .loan-plan-editor-heading,
+  .loan-plan-card-header,
+  .own-funds-summary-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .loan-plan-add-button {
+    width: 100%;
+  }
+
+  .loan-plan-field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .loan-comparison__desktop {
+    display: none;
+  }
+
+  .loan-comparison__mobile {
+    display: grid;
+    gap: 9px;
+  }
+
+  .loan-comparison__card {
+    overflow: hidden;
+    border: 1px solid #ded8d3;
+    border-radius: 7px;
+    background: #fff;
+  }
+
+  .loan-comparison__card--active {
+    border: 2px solid #a16a46;
+  }
+
+  .loan-comparison__card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: #78716c;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .loan-comparison__card--active .loan-comparison__card-header {
+    background: #7c4a2a;
+  }
+
+  .loan-comparison__card-list {
+    margin: 0;
+  }
+
+  .loan-comparison__card-row {
+    display: grid;
+    grid-template-columns: minmax(100px, 0.8fr) minmax(0, 1.2fr);
+    gap: 8px;
+    padding: 6px 9px;
+    border-bottom: 1px solid #eee7e1;
+  }
+
+  .loan-comparison__card-row:last-child {
+    border-bottom: 0;
+  }
+
+  .loan-comparison__card-label,
+  .loan-comparison__card-value {
+    margin: 0;
+    font-size: 11px;
+  }
+
+  .loan-comparison__card-label {
+    color: #78716c;
+  }
+
+  .loan-comparison__card-value {
+    color: #374151;
+    font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .other-cost-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .other-cost-label-field {
+    grid-column: 1 / -1;
+  }
+
+  .own-funds-summary-head strong {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-header {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .app-header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .app-header-actions button {
+    min-width: 0;
+    padding-inline: 6px !important;
+    white-space: nowrap;
+  }
+
+  .app-main {
+    padding-inline: 10px !important;
+  }
+
+  .form-row,
+  .toggle-row,
+  .label-row {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .form-row-label,
+  .toggle-row-label,
+  .label-row-label {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
+
+  .form-row-control,
+  .toggle-row-control,
+  .label-row-control {
+    width: 100%;
+  }
+
+  .loan-plan-quick-results,
+  .active-loan-income-grid {
+    gap: 5px;
+  }
+
+  .loan-plan-quick-results > div,
+  .active-loan-income-grid > div {
+    padding: 6px 3px;
+  }
+
+  .loan-fee-manual-input {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 印刷専用の買主比較表 */
+.print-comparison-title {
   padding: 4px 8px;
-  background: var(--code-bg);
+  background: #78716c;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.print-loan-comparison {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: #111;
+  font-size: 9px;
+}
+
+.print-loan-comparison th,
+.print-loan-comparison td {
+  padding: 4px 5px;
+  border: 1px solid #d6d3d1;
+  overflow-wrap: anywhere;
+}
+
+.print-loan-comparison thead th {
+  background: #f3f4f6;
+  text-align: center;
+}
+
+.print-loan-comparison thead th:first-child,
+.print-loan-comparison tbody th {
+  width: 22%;
+  text-align: left;
+}
+
+.print-loan-comparison td {
+  text-align: right;
+}
+
+.print-loan-comparison .is-active {
+  background: #faf3e8;
+  color: #7c4a2a;
+  font-weight: 700;
+}
+
+.print-loan-comparison th span {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 4px;
+  border-radius: 999px;
+  background: #a16a46;
+  color: #fff;
+  font-size: 8px;
+}
+
+.print-overloan-warning td {
+  padding: 5px 10px;
+  border: 1px solid #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.buyer-print-area .print-disclaimer span {
+  display: block;
+}
+
+@media print {
+  .print-loan-comparison-block {
+    margin-top: 8px;
+  }
+
+  .buyer-print-area .print-disclaimer {
+    margin-top: 6px;
+  }
 }

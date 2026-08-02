@@ -1,7 +1,9 @@
 import Row from "../components/Row";
 import ToggleRow from "../components/ToggleRow";
-import LabelRow from "../components/LabelRow";
 import Section from "../components/Section";
+import LoanPlanEditor from "../components/LoanPlanEditor";
+import OtherCostsEditor from "../components/OtherCostsEditor";
+import { getActiveLoanPlan, getLoanPlanDisplayName } from "../utils/buyerData";
 import {
   parseNum,
   calcChuko,
@@ -10,15 +12,18 @@ import {
   calcIdoKirokuAuto,
   calcTeitoSetsuBAuto,
   calcFudosanShutokuAuto,
-  calcLoanJimuAuto,
-  calcLoan,
-  calcBuyerTotal,
+  calcBuyerPlanSummary,
+  calcLoanPlanCostBreakdown,
 } from "../utils/calc";
 
 export default function Buyer({ buyer, setB }) {
   const buyerPrice = parseNum(buyer.salePriceB);
-  const buyerLoan = parseNum(buyer.loanAmtB);
-  const buyerTotal = calcBuyerTotal(buyer);
+  const activePlan = getActiveLoanPlan(buyer);
+  const activeSummary = calcBuyerPlanSummary(buyer, activePlan);
+  const activeLoanCosts = calcLoanPlanCostBreakdown(buyer, activePlan);
+  const activePlanName = getLoanPlanDisplayName(buyer, activePlan);
+  const buyerLoan = activeSummary.loanAmount;
+  const buyerTotal = activeSummary.costsTotal;
 
   return (
     <div>
@@ -68,6 +73,8 @@ export default function Buyer({ buyer, setB }) {
           <Row label="固定資産税・都市計画税精算" value={buyer.koteishisan} onChange={v => setB("koteishisan", v)} note="売主へ支払い（日割り）" />
           <Row label="管理費・修繕積立金精算" value={buyer.kanriB} onChange={v => setB("kanriB", v)} note="売主へ支払い（日割り）・マンション用" />
         </Section>
+
+        <LoanPlanEditor buyer={buyer} setB={setB} />
 
         <Section title="■ 仲介費用" color="green">
           <ToggleRow
@@ -126,37 +133,15 @@ export default function Buyer({ buyer, setB }) {
           />
         </Section>
 
-        <Section title="■ ローン関連" color="green">
-          <ToggleRow
-            mode="概算"
+        <Section title="■ ローン関連（採用プラン）" color="green">
+          <Row
             label="ローン事務手数料"
-            autoValue={calcLoanJimuAuto(buyerLoan, parseFloat(buyer.loanJimuRate) || 3.3)}
-            manualValue={buyer.loanJimu}
-            onManualChange={v => setB("loanJimu", v)}
-            isAuto={buyer.autoLoanJimu !== false}
-            onToggle={v => setB("autoLoanJimu", v)}
-            autoNote={`借入額×${buyer.loanJimuRate || 3.3}%（定率型）`}
-            note="実額を入力"
+            value={activeLoanCosts.loanFee}
+            auto
+            note={activePlan.loanFeeMode === "auto"
+              ? `${activePlanName}：借入額×${activePlan.loanFeeRate === "" ? "未入力" : activePlan.loanFeeRate}%`
+              : `${activePlanName}：手入力額`}
           />
-          {buyer.autoLoanJimu !== false && (
-            <div style={{ display: "flex", gap: 8, padding: "4px 0" }}>
-              <span style={{ fontSize: 12, color: "#6b7280", alignSelf: "center" }}>手数料率：</span>
-              {["2.2", "3.3"].map(rate => (
-                <label key={rate} style={{
-                  display: "flex", alignItems: "center", gap: 5, cursor: "pointer",
-                  padding: "3px 12px", borderRadius: 20, fontSize: 12, fontWeight: 600,
-                  background: (buyer.loanJimuRate || "3.3") === rate ? "#a16a46" : "#e5e7eb",
-                  color: (buyer.loanJimuRate || "3.3") === rate ? "#fff" : "#374151"
-                }}>
-                  <input type="radio" name="loanJimuRate" value={rate}
-                    checked={(buyer.loanJimuRate || "3.3") === rate}
-                    onChange={() => setB("loanJimuRate", rate)}
-                    style={{ display: "none" }} />
-                  {rate}%
-                </label>
-              ))}
-            </div>
-          )}
         </Section>
 
         <Section title="■ 保険" color="green">
@@ -166,10 +151,9 @@ export default function Buyer({ buyer, setB }) {
         <Section title="■ その他費用" color="green">
           <Row label="リフォーム費用" value={buyer.reform} onChange={v => setB("reform", v)} />
           <Row label="引越し費用" value={buyer.hikkoshiB} onChange={v => setB("hikkoshiB", v)} />
-          <LabelRow
-            label={buyer.otherBLabel}
-            value={buyer.otherB}
-            onChange={(f, v) => f === "label" ? setB("otherBLabel", v) : setB("otherB", v)}
+          <OtherCostsEditor
+            otherCosts={buyer.otherCosts}
+            onChange={(otherCosts) => setB("otherCosts", otherCosts)}
           />
         </Section>
 
@@ -179,12 +163,34 @@ export default function Buyer({ buyer, setB }) {
           <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>¥{buyerTotal.toLocaleString()}</div>
         </div>
         {buyerPrice > 0 && (
-          <div style={{ background: "#7c4a2a", borderRadius: 8, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#f5e6d3" }}>購入価格＋諸費用　総額</span>
-            <span style={{ fontSize: 20, fontWeight: 700, color: "#e8c87a" }}>
-              ¥{(buyerPrice + buyerTotal).toLocaleString()}
-            </span>
-          </div>
+          <>
+            <div style={{ background: "#7c4a2a", borderRadius: 8, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "#f5e6d3" }}>購入価格＋諸費用　総額</span>
+              <span style={{ fontSize: 20, fontWeight: 700, color: "#e8c87a" }}>
+                ¥{activeSummary.purchaseTotal.toLocaleString()}
+              </span>
+            </div>
+            <div className="own-funds-summary" aria-live="polite">
+              <div className="own-funds-summary-head">
+                <div>
+                  <span className="own-funds-summary-label">必要自己資金（概算）</span>
+                  <span className="own-funds-summary-plan">採用中：{activePlanName}</span>
+                </div>
+                <strong>¥{activeSummary.requiredOwnFunds.toLocaleString()}</strong>
+              </div>
+              <div className="own-funds-formula">
+                購入総額 ¥{activeSummary.purchaseTotal.toLocaleString()}
+                <span>－</span>
+                借入予定額 ¥{activeSummary.loanAmount.toLocaleString()}
+              </div>
+              {activeSummary.borrowingExcess > 0 && (
+                <div className="own-funds-warning" role="alert">
+                  借入予定額が購入総額を¥{activeSummary.borrowingExcess.toLocaleString()}上回っています。
+                </div>
+              )}
+              <p>手付金を支払済みの場合、手付金は必要自己資金の一部に含まれます。</p>
+            </div>
+          </>
         )}
 
         <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 4, lineHeight: 1.8, borderTop: "1px solid #e5e7eb", paddingTop: 10 }}>
@@ -194,81 +200,6 @@ export default function Buyer({ buyer, setB }) {
         </div>
       </div>
 
-      {/* ▼ 借入予定額 */}
-      <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginTop: 14, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb", borderLeft: "3px solid #a16a46" }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#a16a46", marginBottom: 8 }}>🏦 借入予定額</div>
-        <Row label="借入予定額" value={buyer.loanAmtB} onChange={v => setB("loanAmtB", v)} />
-      </div>
-
-      {/* ▼ ローンシミュレーション */}
-      {(() => {
-        const loan = calcLoan(buyerLoan, parseFloat(buyer.loanKinri) || 0, parseFloat(buyer.loanKikan) || 0);
-        return (
-          <div style={{ background: "#fff", borderRadius: 10, padding: 16, marginTop: 14, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", border: "1px solid #e5e7eb" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, borderBottom: "1px solid #e5e7eb", paddingBottom: 8 }}>
-              <span style={{ fontSize: 18 }}>📊</span>
-              <span style={{ fontSize: 15, fontWeight: 700, color: "#a16a46" }}>ローンシミュレーション</span>
-              <span style={{ fontSize: 11, color: "#9ca3af" }}>元利均等返済</span>
-            </div>
-
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
-              <div style={{ flex: "1 1 100px" }}>
-                <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>金利（年率%）</label>
-                <input type="text" inputMode="decimal" value={buyer.loanKinri}
-                  onChange={e => setB("loanKinri", e.target.value)}
-                  style={{ width: "100%", padding: "7px 10px", border: "1px solid #d1d5db", borderRadius: 6, fontSize: 13, boxSizing: "border-box", textAlign: "right" }} />
-              </div>
-              <div style={{ flex: "1 1 100px" }}>
-                <label style={{ fontSize: 11, color: "#6b7280", display: "block", marginBottom: 4 }}>返済期間（年）</label>
-                <input type="text" inputMode="numeric" value={buyer.loanKikan}
-                  onChange={e => setB("loanKikan", e.target.value)}
-                  style={{ width: "100%", padding: "7px 10px", border: "1px solid #d1d5db", borderRadius: 6, fontSize: 13, boxSizing: "border-box", textAlign: "right" }} />
-              </div>
-            </div>
-
-            {loan && buyerLoan > 0 ? (
-              <div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 10 }}>
-                  {[
-                    ["月々返済額", `¥${loan.monthly.toLocaleString()}`, "#a16a46", "#faf3e8", "#f5e6d3"],
-                    ["総返済額", `¥${loan.total.toLocaleString()}`, "#7c4a2a", "#faf3e8", "#f5e6d3"],
-                    ["総利息", `¥${loan.interest.toLocaleString()}`, "#92400e", "#fffbeb", "#fde68a"],
-                  ].map(([lbl, val, color, bg, bd]) => (
-                    <div key={lbl} style={{ background: bg, borderRadius: 8, padding: "10px 12px", textAlign: "center", border: `1px solid ${bd}` }}>
-                      <div style={{ fontSize: 11, color, marginBottom: 4 }}>{lbl}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color }}>{val}</div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ background: "#f8fafc", borderRadius: 8, padding: "10px 14px", marginBottom: 10, border: "1px solid #e2e8f0" }}>
-                  <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 6 }}>📋 必要年収の目安（返済比率別）</div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                    {[["25%", 0.25], ["30%", 0.30], ["35%", 0.35]].map(([label, ratio]) => {
-                      const annual = loan.monthly * 12;
-                      const needed = Math.ceil(annual / ratio / 10000) * 10000;
-                      return (
-                        <div key={label} style={{ textAlign: "center", background: "#fff", borderRadius: 6, padding: "6px 8px", border: "1px solid #e2e8f0" }}>
-                          <div style={{ fontSize: 11, color: "#6b7280" }}>比率{label}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#a16a46" }}>¥{needed.toLocaleString()}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 6 }}>※金融機関により審査基準は異なります</div>
-                </div>
-                <div style={{ fontSize: 11, color: "#9ca3af", lineHeight: 1.8 }}>
-                  ※元利均等返済・ボーナス払いなし・概算です<br/>
-                  ※変動金利の場合、将来の返済額は変わります
-                </div>
-              </div>
-            ) : (
-              <div style={{ textAlign: "center", padding: "16px", color: "#9ca3af", fontSize: 13 }}>
-                借入額・金利・期間を入力すると計算します
-              </div>
-            )}
-          </div>
-        );
-      })()}
     </div>
   );
 }

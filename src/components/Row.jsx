@@ -3,15 +3,15 @@ import { parseNum } from "../utils/calc";
 
 export default function Row({ label, value, onChange, auto, unit = "円", note }) {
   return (
-    <div style={{
+    <div className="form-row" style={{
       display: "flex", alignItems: "center", borderBottom: "1px solid #e8edf2",
       padding: "8px 0", gap: 8
     }}>
-      <div style={{ flex: "0 0 200px", fontSize: 13, color: "#374151", lineHeight: 1.4 }}>
+      <div className="form-row-label" style={{ flex: "0 0 200px", fontSize: 13, color: "#374151", lineHeight: 1.4 }}>
         {label}
         {note && <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2 }}>{note}</div>}
       </div>
-      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
+      <div className="form-row-control" style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
         {auto ? (
           <div style={{
             flex: 1, padding: "6px 10px", background: "#f0f7ff", border: "1px solid #bfdbfe",

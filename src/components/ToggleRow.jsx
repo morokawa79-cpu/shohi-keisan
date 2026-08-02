@@ -2,8 +2,8 @@ import NumInput from "./NumInput";
 
 export default function ToggleRow({ label, autoValue, manualValue, onManualChange, isAuto, onToggle, note, autoNote, mode = "規定" }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #e8edf2", padding: "8px 0", gap: 8 }}>
-      <div style={{ flex: "0 0 190px", fontSize: 13, color: "#374151", lineHeight: 1.4 }}>
+    <div className="toggle-row" style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #e8edf2", padding: "8px 0", gap: 8 }}>
+      <div className="toggle-row-label" style={{ flex: "0 0 190px", fontSize: 13, color: "#374151", lineHeight: 1.4 }}>
         {label}
         {(isAuto ? autoNote : note) && (
           <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 2 }}>{isAuto ? autoNote : note}</div>
@@ -14,7 +14,7 @@ export default function ToggleRow({ label, autoValue, manualValue, onManualChang
           style={{ width: 14, height: 14, accentColor: "#1e3a5f" }} />
         <span style={{ fontSize: 10, color: isAuto ? "#1e3a5f" : "#9ca3af", fontWeight: 600 }}>{mode}</span>
       </label>
-      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
+      <div className="toggle-row-control" style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
         {isAuto ? (
           <div style={{ flex: 1, padding: "6px 10px", background: "#f0f7ff", border: "1px solid #bfdbfe", borderRadius: 6, fontSize: 13, color: "#1e40af", textAlign: "right" }}>
             {autoValue != null ? `¥${Math.round(autoValue).toLocaleString()}` : "—"}

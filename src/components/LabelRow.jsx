@@ -2,15 +2,16 @@ import NumInput from "./NumInput";
 
 export default function LabelRow({ label, value, onChange, placeholder = "項目名" }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #e8edf2", padding: "8px 0" }}>
+    <div className="label-row" style={{ display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid #e8edf2", padding: "8px 0" }}>
       <input
+        className="label-row-label"
         type="text"
         value={label}
         onChange={e => onChange("label", e.target.value)}
         placeholder={placeholder}
         style={{ flex: "0 0 200px", padding: "6px 10px", border: "1px solid #d1d5db", borderRadius: 6, fontSize: 13 }}
       />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
+      <div className="label-row-control" style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
         <NumInput
           value={value}
           onChange={v => onChange("value", v)}
