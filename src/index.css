@@ -33,13 +33,14 @@ textarea {
 
 /* 買主ローンプラン */
 .loan-plan-editor {
-  margin: 18px 0;
-  padding: 14px;
-  border: 1px solid #ead8c7;
+  margin: 14px 0 0;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  background: #faf3e8;
+  background: #fff;
   color: #374151;
   text-align: left;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .loan-plan-editor-heading {
@@ -53,8 +54,8 @@ textarea {
 .loan-plan-editor-heading h3,
 .loan-comparison__title {
   margin: 0;
-  color: #7c4a2a;
-  font-size: 15px;
+  color: #57534e;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -78,9 +79,19 @@ textarea {
   cursor: pointer;
 }
 
+.loan-plan-add-button {
+  border-color: #d1d5db;
+  color: #57534e;
+  font-weight: 600;
+}
+
 .loan-plan-add-button:hover,
 .other-cost-add:hover {
   background: #fff8ef;
+}
+
+.loan-plan-add-button:hover {
+  background: #f9fafb;
 }
 
 .loan-plan-list {
@@ -93,14 +104,14 @@ textarea {
   padding: 14px;
   border: 1px solid #ded8d3;
   border-radius: 9px;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(92, 63, 43, 0.06);
+  background: #fdfdfd;
+  box-shadow: none;
 }
 
 .loan-plan-card.is-active {
-  border: 2px solid #a16a46;
-  background: #fffdf9;
-  box-shadow: 0 3px 10px rgba(124, 74, 42, 0.12);
+  border-color: #c9b8aa;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(92, 63, 43, 0.06);
 }
 
 .loan-plan-card-header {
@@ -117,7 +128,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #7c4a2a;
+  color: #57534e;
   font-size: 14px;
   font-weight: 700;
 }
@@ -134,8 +145,8 @@ textarea {
   align-items: center;
   padding: 2px 7px;
   border-radius: 999px;
-  background: #a16a46;
-  color: #fff;
+  background: #f5e6d3;
+  color: #7c4a2a;
   font-size: 10px;
   font-weight: 700;
   white-space: nowrap;

@@ -74,8 +74,6 @@ export default function Buyer({ buyer, setB }) {
           <Row label="管理費・修繕積立金精算" value={buyer.kanriB} onChange={v => setB("kanriB", v)} note="売主へ支払い（日割り）・マンション用" />
         </Section>
 
-        <LoanPlanEditor buyer={buyer} setB={setB} />
-
         <Section title="■ 仲介費用" color="green">
           <ToggleRow
             label="仲介手数料（消費税込）"
@@ -199,6 +197,9 @@ export default function Buyer({ buyer, setB }) {
           ※印紙代は軽減税率（令和9年3月31日まで）を適用しています。
         </div>
       </div>
+
+      {/* ローン入力・比較は費用サマリーの後に控えめに配置 */}
+      <LoanPlanEditor buyer={buyer} setB={setB} />
 
     </div>
   );

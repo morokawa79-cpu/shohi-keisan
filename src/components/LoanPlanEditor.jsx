@@ -255,8 +255,8 @@ export default function LoanPlanEditor({ buyer, setB }) {
     <section className="loan-plan-editor" aria-labelledby="loan-plan-editor-title">
       <div className="loan-plan-editor-heading">
         <div>
-          <h3 id="loan-plan-editor-title">🏦 ローンプラン</h3>
-          <p>金融機関や金利条件が異なる代替プランを3件まで比較できます。</p>
+          <h3 id="loan-plan-editor-title">ローンプラン・返済試算</h3>
+          <p>借入予定がある場合に入力してください。必要に応じて3件まで比較できます。</p>
         </div>
         {nextDisabledPlan && (
           <button type="button" className="loan-plan-add-button" onClick={enableNextPlan}>
